@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "supported_preset": "laravel, per, psr12, symfony, empty",
+    "rules": {
+        "concat_space": {
+            "spacing": "one"
+        }
+    }
+}
