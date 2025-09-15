@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Http\Requests\Rules\DateRange;
 use App\Http\Requests\Rules\UserCheck;
 use App\Models\Tag;
 use Illuminate\Validation\Rule;
@@ -68,7 +69,12 @@ final class TaskRequest extends BaseRequest
             case 'GET':
             default:
                 $rules = [
-                    'name' => ['string', 'max:100'],
+                    'status' => ['nullable', Rule::in(TaskStatus::getValues())],
+                    'priority' => ['nullable', Rule::in(TaskPriority::getValues())],
+                    'assigned_to' => ['nullable', 'integer', new UserCheck],
+                    'tags' => ['nullable', 'string', 'regex:/^(\d+,)*\d+$/'],
+                    'due_date_range' => ['nullable', new DateRange],
+                    'keyword' => ['nullable', 'string'],
                 ];
                 break;
         }

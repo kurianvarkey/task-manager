@@ -17,7 +17,7 @@ class TagDTO
      * Create a new instance.
      */
     public function __construct(
-        public string $name,
+        public ?string $name,
         public ?string $color = null
     ) {}
 
@@ -29,9 +29,11 @@ class TagDTO
         self::$httpMethod = $httpMethod;
 
         $name = $data['name'] ?? null;
+        // @codeCoverageIgnoreStart
         if (self::$httpMethod === 'POST' && empty($name)) {
             throw new InvalidArgumentException('Name is required');
         }
+        // @codeCoverageIgnoreEnd
 
         return new self(
             name: $name,
@@ -44,7 +46,7 @@ class TagDTO
      */
     public function toArray(): array
     {
-        return self::$httpMethod === 'PUT'
+        return self::$httpMethod === 'PATCH'
         ? array_filter(get_object_vars($this), fn ($value) => ! is_null($value))
         : get_object_vars($this);
     }

@@ -6,24 +6,11 @@ namespace App\Enums;
 
 use App\Enums\Traits\EnumCommonFunctions;
 
-enum TaskStatus: int
+enum TaskStatus: string
 {
     use EnumCommonFunctions;
 
-    case Pending = 1;
-    case InProgress = 2;
-    case Completed = 3;
-
-    /**
-     * To String will return the name of the role
-     */
-    public function toString(): string
-    {
-        return match ($this) {
-            self::Pending => 'pending',
-            self::InProgress => 'inprogress',
-            self::Completed => 'completed',
-            default => '',
-        };
-    }
+    case Pending = 'pending';
+    case InProgress = 'inprogress';
+    case Completed = 'completed';
 }

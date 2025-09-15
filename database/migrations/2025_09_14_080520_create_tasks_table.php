@@ -16,14 +16,15 @@ return new class extends Migration
             $table->id();
             $table->string('title', 100)->index('tasks_title');
             $table->text('description')->nullable();
-            $table->unsignedTinyInteger('status')->index('tasks_status');
-            $table->unsignedTinyInteger('priority')->index('tasks_priority');
+            $table->string('status', 10)->index('tasks_status');
+            $table->string('priority', 10)->index('tasks_priority');
             $table->date('due_date')->nullable()->index('tasks_due_date');
-            $table->unsignedInteger('assigned_to')->nullable()->index('tasks_assigned_to');
-            $table->unsignedInteger('version')->index('tasks_version');
+            $table->unsignedBigInteger('assigned_to')->nullable()->index('tasks_assigned_to');
+            $table->unsignedInteger('version');
             $table->json('metadata')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('created_at')->nullable()->index('tasks_created_at');
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable()->index('tasks_deleted_at');
 
             $table->foreign('assigned_to')
                 ->references('id')->on('users')

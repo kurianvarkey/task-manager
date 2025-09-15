@@ -80,7 +80,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 case $exception instanceof GeneralException:
                 default:
                     $message = $exception->getMessage();
-                    $statusCode = $exception->getCode() >= 400 ? $exception->getCode() : $statusCode;
+                    $statusCode = $code = $exception->getCode() >= 400 ? $exception->getCode() : $statusCode;
                     break;
             }
 

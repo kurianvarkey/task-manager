@@ -4,7 +4,6 @@ use App\Helpers\Response\AppResponse;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Middlewares\Authenticate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -17,10 +16,6 @@ Route::get('/', function () {
         'message' => 'Welcome to ' . config('app.name') . ' ' . env('APP_VERSION', '1.0'),
     ], Response::HTTP_OK);
 });
-
-/* Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum'); */
 
 /**
  * Route Fallback - for any endpoints not supported by the system
@@ -36,4 +31,10 @@ Route::fallback(function () {
 Route::middleware(Authenticate::class)->group(function () {
     Route::apiResource('tags', TagController::class);
     Route::apiResource('tasks', TaskController::class);
+
+    // For toggle status
+    Route::patch('tasks/{taskId}/toggle-status', [TaskController::class, 'toggleStatus']);
+
+    // For restore
+    Route::patch('tasks/{taskId}/restore', [TaskController::class, 'restore']);
 });

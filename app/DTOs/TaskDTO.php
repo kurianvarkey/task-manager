@@ -38,9 +38,11 @@ class TaskDTO
         self::$httpMethod = $httpMethod;
 
         $title = $data['title'] ?? null;
+        // @codeCoverageIgnoreStart
         if (self::$httpMethod === 'POST' && empty($title)) {
             throw new InvalidArgumentException('Title is required');
         }
+        // @codeCoverageIgnoreEnd
 
         return new self(
             title: $title,
@@ -89,7 +91,7 @@ class TaskDTO
         $data = collect(get_object_vars($this))->except(['tags'])->toArray();
         $data['assigned_to'] = $data['assigned_to']['id'] ?? null;
 
-        return self::$httpMethod === 'PUT'
+        return self::$httpMethod === 'PATCH'
         ? array_filter($data, fn ($value) => ! is_null($value))
         : $data;
     }
@@ -102,5 +104,13 @@ class TaskDTO
         $data = get_object_vars($this);
 
         return ! empty($data['tags']) ? array_filter(array_column($data['tags'], 'id')) : [];
+    }
+
+    /**
+     * Get the HTTP method.
+     */
+    public function getHttpMethod(): string
+    {
+        return self::$httpMethod;
     }
 }

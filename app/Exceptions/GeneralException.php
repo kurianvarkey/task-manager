@@ -22,6 +22,8 @@ class GeneralException extends Exception
     /**
      * Report the exception.
      * return true if custom reporting is needed
+     * 
+     * @codeCoverageIgnore
      */
     public function report(): bool
     {

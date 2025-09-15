@@ -84,7 +84,10 @@ final class TagService extends ServiceBase
             ->id($id)
             ->firstOrFail();
 
-        $tag->fill($dto->toArray())->save();
+        $tagData = $dto->toArray();
+        if (! empty($tagData)) {
+            $tag->fill($tagData)->save();
+        }
 
         return $tag->wasChanged() ? $tag->refresh() : $tag;
     }

@@ -23,7 +23,7 @@ class TaskFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
-            'due_date' => fake()->date(),
+            'due_date' => fake()->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
             'assigned_to' => UserFactory::new()->create()->id,
             'status' => fake()->randomElement(TaskStatus::cases()),
             'priority' => fake()->randomElement(TaskPriority::cases()),
@@ -35,11 +35,11 @@ class TaskFactory extends Factory
     /**
      * Configure the model after it's been created.
      */
-    public function configure()
+    /* public function configure()
     {
         return $this->afterCreating(function (Task $task) {
             $tags = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id');
             $task->tags()->attach($tags);
         });
-    }
+    } */
 }

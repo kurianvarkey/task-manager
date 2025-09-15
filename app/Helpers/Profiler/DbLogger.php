@@ -27,15 +27,9 @@ class DbLogger
      * Records all database queries and logs them to the default log channel.
      * The log format is: "{sql} ({time} ms)"
      */
-    public function record(string ...$skipPatterns): void
+    public function record(): void
     {
-        DB::listen(function (QueryExecuted $query) use ($skipPatterns) {
-            foreach ($skipPatterns as $pattern) {
-                if (stripos($query->sql, $pattern) !== false) {
-                    return;
-                }
-            }
-
+        DB::listen(function (QueryExecuted $query) {
             $sqlData = [
                 'sql' => $query->sql,
                 'bindings' => $query->bindings,
@@ -46,36 +40,6 @@ class DbLogger
 
             Log::info($this->format($sqlData));
         });
-    }
-
-    /**
-     * Clears the list of executed queries.
-     */
-    public function clear(): void
-    {
-        $this->arrSql = [];
-    }
-
-    /**
-     * Returns an array of all executed queries, each containing the execution time and the
-     * formatted SQL query (with bindings).
-     */
-    public function list(): array
-    {
-        return array_map(function ($data) {
-            return [
-                'time' => $data['time'],
-                'sql' => $this->format($data),
-            ];
-        }, $this->arrSql);
-    }
-
-    /**
-     * Get the last executed SQL query.
-     */
-    public function getLastSql(): string
-    {
-        return $this->format(end($this->arrSql) ?: []);
     }
 
     /**

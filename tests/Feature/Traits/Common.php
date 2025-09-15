@@ -71,7 +71,7 @@ trait Common
     /**
      * Patch json with header.
      */
-    public function patchWithHeader(string $endPoint, array $data)
+    public function patchWithHeader(string $endPoint, array $data = [])
     {
         return $this->withHeaders(
             [

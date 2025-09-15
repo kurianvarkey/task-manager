@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\TaskDTO;
+use App\Enums\TaskStatus;
+use App\Exceptions\GeneralException;
 use App\Models\Task;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 final class TaskService extends ServiceBase
@@ -27,7 +31,7 @@ final class TaskService extends ServiceBase
     public function sortableFields(): array
     {
         return [
-            'name',
+            'title', 'priority', 'due_date', 'created_at',
         ];
     }
 
@@ -56,6 +60,11 @@ final class TaskService extends ServiceBase
      */
     public function list(?array $filters = [], ?int $limit = null, ?string $sortField = null, ?string $sortDirection = null): LengthAwarePaginator
     {
+        $query = $this->taskModel->newQuery();
+
+        // Apply filters
+        $this->applyFilters($query, $filters);
+
         $limit = ($limit && $limit > 0 && $limit <= self::MAX_PAGINATION_LIMIT) ?
             $limit :
             self::DEFAULT_PAGINATION_LIMIT;
@@ -63,15 +72,12 @@ final class TaskService extends ServiceBase
         $sortField = $sortField ?? $this->getSortableField($filters['sort'] ?? null);
         $sortDirection = $sortDirection ?? ($filters['direction'] ?? null);
 
-        // Apply filters
-        $query = $this->taskModel
-            ->when(! empty($filters['name']), function ($query) use ($filters) {
-                $query->name($filters['name']);
-            });
-
         if ($sortField && $sortDirection) {
             $query->orderBy($sortField, $sortDirection);
         }
+
+        // load relationships
+        $query->with(['assignedUser', 'tags']);
 
         return $query->paginate($limit);
     }
@@ -81,9 +87,7 @@ final class TaskService extends ServiceBase
      */
     public function find(int $id): ?Task
     {
-        return $this->taskModel
-            ->id($id)
-            ->firstOrFail();
+        return $this->taskModel->id($id)->firstOrFail();
     }
 
     /**
@@ -93,13 +97,26 @@ final class TaskService extends ServiceBase
     {
         // Set enums values
         $dto->setEnums();
+        $taskData = $dto->toArray();
+        $httpMethod = $dto->getHttpMethod();
 
-        $task = $this->taskModel
-            ->id($id)
-            ->firstOrFail();
+        if ($httpMethod === 'PUT' && empty($taskData['version'])) {
+            throw new GeneralException('Version is required');
+        }
 
-        $task = $this->doDbTransaction(function () use ($task, $dto) {
-            $task->fill($dto->toArray())->save();
+        $task = $this->doDbTransaction(function () use ($id, $taskData, $dto, $httpMethod) {
+            $task = $this->taskModel->id($id)->firstOrFail();
+
+            if ($httpMethod === 'PUT') {
+                if ($task->version !== $taskData['version']) {
+                    throw new GeneralException('This task has been updated by someone else and there is a newer version of this task exists', Response::HTTP_CONFLICT);
+                }
+                $taskData['version'] = $task->version + 1;
+            }
+
+            if (! empty($taskData)) {
+                $task->fill($taskData)->save();
+            }
 
             $tags = $dto->tags();
             if ($tags) {
@@ -122,8 +139,71 @@ final class TaskService extends ServiceBase
             ->id($id)
             ->firstOrFail();
 
-        $task->tags()->detach();
+        // If in future we need permanent delete, then uncomment following line
+        // $task->tags()->detach();
 
         return $task->delete();
+    }
+
+    /**
+     * Toggle status
+     */
+    public function toggleStatus(int $id): Task
+    {
+        $task = $this->taskModel->id($id)->firstOrFail();
+
+        $task->status = match ($task->status) {
+            TaskStatus::Pending => TaskStatus::InProgress,
+            TaskStatus::InProgress => TaskStatus::Completed,
+            TaskStatus::Completed => TaskStatus::Pending,
+        };
+        $task->save();
+
+        return $task->loadMissing(['assignedUser', 'tags']);
+    }
+
+    /**
+     * Restore a soft deleted resource
+     */
+    public function restore(int $id): Task
+    {
+        $task = $this->taskModel->withTrashed()->id($id)->firstOrFail();
+
+        $task->restore();
+
+        return $task->loadMissing(['assignedUser', 'tags']);
+    }
+
+    /**
+     * Apply filters
+     */
+    private function applyFilters(Builder $query, $filters): void
+    {
+        // filter by status
+        $query->when(! empty($filters['status']), function ($query) use ($filters) {
+            $query->status($filters['status']);
+        })
+        // filter by priority
+            ->when(! empty($filters['priority']), function ($query) use ($filters) {
+                $query->priority($filters['priority']);
+            })
+        // filter by assigned_to
+            ->when(! empty($filters['assigned_to']), function ($query) use ($filters) {
+                $query->assignedTo($filters['assigned_to']);
+            })
+        // filter by due_date_range
+            ->when(! empty($filters['due_date_range']), function ($query) use ($filters) {
+                $query->where(function ($query) use ($filters) {
+                    $query->dueDateRange($filters['due_date_range']);
+                });
+            })
+        // filter by tags
+            ->when(! empty($filters['tags']), function ($query) use ($filters) {
+                $query->tagsIn($filters['tags']);
+            })
+        // filter by keywords
+            ->when(! empty($filters['keyword']), function ($query) use ($filters) {
+                $query->keyword($filters['keyword']);
+            });
     }
 }

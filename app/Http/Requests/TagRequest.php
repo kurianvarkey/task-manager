@@ -41,7 +41,7 @@ final class TagRequest extends BaseRequest
             case 'GET':
             default:
                 $rules = [
-                    'name' => ['string', 'max:100'],
+                    'name' => ['nullable', 'string', 'max:100'],
                 ];
                 break;
         }

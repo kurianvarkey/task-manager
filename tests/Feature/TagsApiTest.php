@@ -27,23 +27,31 @@ final class TagsApiTest extends TestCase
         // call create api with validation error for empty input
         $this->postWithHeader($this->endPoint, [])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(fn (AssertableJson $json) => $json->where('status', 'failed')
-                ->has('errors', 1, fn (AssertableJson $json) => $json->where('type', 'validation')
-                    ->where('key', 'name')
-                    ->where('message', 'Name is required')
-                    ->etc()
-                )
+            ->assertJson(
+                fn (AssertableJson $json) => $json->where('status', 'failed')
+                    ->has(
+                        'errors',
+                        1,
+                        fn (AssertableJson $json) => $json->where('type', 'validation')
+                            ->where('key', 'name')
+                            ->where('message', 'Name is required')
+                            ->etc()
+                    )
             );
 
         // call create api with validation error for empty name and wrong color hexa code
         $this->postWithHeader($this->endPoint, ['name' => 'Test', 'color' => 'test'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(fn (AssertableJson $json) => $json->where('status', 'failed')
-                ->has('errors', 1, fn (AssertableJson $json) => $json->where('type', 'validation')
-                    ->where('key', 'color')
-                    ->where('message', 'The color field must be a valid hexadecimal color.')
-                    ->etc()
-                )
+            ->assertJson(
+                fn (AssertableJson $json) => $json->where('status', 'failed')
+                    ->has(
+                        'errors',
+                        1,
+                        fn (AssertableJson $json) => $json->where('type', 'validation')
+                            ->where('key', 'color')
+                            ->where('message', 'The color field must be a valid hexadecimal color.')
+                            ->etc()
+                    )
             );
     }
 
@@ -67,12 +75,16 @@ final class TagsApiTest extends TestCase
         // try to create another tag with same name
         $this->postWithHeader($this->endPoint, ['name' => 'Test'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(fn (AssertableJson $json) => $json->where('status', 'failed')
-                ->has('errors', 1, fn (AssertableJson $json) => $json->where('type', 'validation')
-                    ->where('key', 'name')
-                    ->where('message', 'The name Test has already been taken.')
-                    ->etc()
-                )
+            ->assertJson(
+                fn (AssertableJson $json) => $json->where('status', 'failed')
+                    ->has(
+                        'errors',
+                        1,
+                        fn (AssertableJson $json) => $json->where('type', 'validation')
+                            ->where('key', 'name')
+                            ->where('message', 'The name Test has already been taken.')
+                            ->etc()
+                    )
             );
     }
 
@@ -98,18 +110,21 @@ final class TagsApiTest extends TestCase
             ->assertJsonPath('data.meta.total', $count)
             ->assertJson(
                 fn (AssertableJson $json) => $json->where('status', 'success')
-                    ->has('data', fn (AssertableJson $json) => $json->whereAllType([
-                        'meta' => 'array',
-                        'results' => 'array',
-                    ])->has(
-                        'meta', fn (AssertableJson $json) => $json->where('total', $count)
-                            ->where('per_page', TagService::DEFAULT_PAGINATION_LIMIT)
-                            ->where('current_page', 1)
-                            ->where('last_page', 1)
-                            ->where('from', 1)
-                            ->where('to', $count)
-                            ->etc()
-                    )
+                    ->has(
+                        'data',
+                        fn (AssertableJson $json) => $json->whereAllType([
+                            'meta' => 'array',
+                            'results' => 'array',
+                        ])->has(
+                            'meta',
+                            fn (AssertableJson $json) => $json->where('total', $count)
+                                ->where('per_page', TagService::DEFAULT_PAGINATION_LIMIT)
+                                ->where('current_page', 1)
+                                ->where('last_page', 1)
+                                ->where('from', 1)
+                                ->where('to', $count)
+                                ->etc()
+                        )
                     )
             );
     }

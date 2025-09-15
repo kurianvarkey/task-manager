@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->unsignedTinyInteger('role'); // enum class
+            $table->string('role', 10); // enum class
             $table->timestamps();
         });
 

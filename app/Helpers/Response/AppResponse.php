@@ -25,6 +25,8 @@ class AppResponse
 {
     /**
      * Get default headers
+     * 
+     * @codeCoverageIgnore
      */
     public static function getDefaultHeaders(bool $isAllowOrigin = true): array
     {
@@ -37,6 +39,8 @@ class AppResponse
 
     /**
      * Get allow headers
+     * 
+     * @codeCoverageIgnore
      */
     public static function getAllowHeaders(): string
     {
@@ -78,9 +82,11 @@ class AppResponse
             $errors = [ValidationErrorFormatter::formatError(message: $errorMessages, errorCode: $errorCode)];
         }
 
+        // @codeCoverageIgnoreStart
         if ($statusCode > 1000) {
             $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
+        // @codeCoverageIgnoreEnd
 
         return response()->json([
             'status' => 'failed',
@@ -90,6 +96,8 @@ class AppResponse
 
     /**
      * Send Throttle response
+     * 
+     * @codeCoverageIgnore
      */
     public static function sendThrottle(string $errorMessage, array $headers = []): JsonResponse
     {

@@ -84,13 +84,37 @@ final class TaskController extends Controller
     /**
      * Delete a specific resource.     *
      */
-    public function destroy(string $id): ?JsonResponse
+    public function destroy(int|string $id): ?JsonResponse
     {
         $this->taskService->delete((int) $id);
 
         return AppResponse::sendOk(
             data: null,
             statusCode: Response::HTTP_NO_CONTENT,
+        );
+    }
+
+    /**
+     * Toggle status
+     */
+    public function toggleStatus(int|string $id): JsonResponse
+    {
+        return AppResponse::sendOk(
+            data: new TaskResource(
+                $this->taskService->toggleStatus((int) $id)
+            )
+        );
+    }
+
+    /**
+     * Restore a soft deleted resource
+     */
+    public function restore(int|string $id): JsonResponse
+    {
+        return AppResponse::sendOk(
+            data: new TaskResource(
+                $this->taskService->restore((int) $id)
+            )
         );
     }
 }
