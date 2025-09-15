@@ -22,6 +22,7 @@ use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -75,6 +76,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     break;
                 case $exception instanceof MethodNotAllowedHttpException:
                     $message = 'Method Not Allowed. Please check your endpoint and http verb type. ' . $exception->getMessage();
+                    break;
+                case $exception instanceof AccessDeniedHttpException :
+                    $message = $exception->getMessage();
+                    $statusCode = $code = Response::HTTP_FORBIDDEN;
                     break;
                 case $exception instanceof InvalidArgumentException:
                 case $exception instanceof GeneralException:
