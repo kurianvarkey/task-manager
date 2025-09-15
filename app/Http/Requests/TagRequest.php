@@ -22,8 +22,15 @@ final class TagRequest extends BaseRequest
                 ];
                 break;
 
-            case 'PUT':
-            case 'PATCH':
+            case 'PUT': // PUT replaces the resource
+                $id = trim(request()->segment(3));
+                $rules = [
+                    'name' => ['required', 'string', 'max:100',  new TagNameCheck($id)],
+                    'color' => ['hex_color'],
+                ];
+                break;
+
+            case 'PATCH': // PATCH updates the resource partially
                 $id = trim(request()->segment(3));
                 $rules = [
                     'name' => ['string', 'max:100',  new TagNameCheck($id)],

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * ServiceBase class
  */
-abstract class ServiceBase implements IServiceRepository
+abstract class ServiceBase
 {
     /**
      * The default pagination limit for records.

@@ -26,24 +26,40 @@ final class TaskRequest extends BaseRequest
                     'status' => [Rule::in(TaskStatus::getValues())],
                     'priority' => [Rule::in(TaskPriority::getValues())],
                     'due_date' => ['date'],
-                    'assigned_to' => ['integer', new UserCheck],
-                    'metadata' => ['array'],
+                    'assigned_to' => ['nullable', 'array'],
+                    'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
+                    'metadata' => ['nullable', 'array'],
                     'tags' => ['nullable', 'array'],
                     'tags.*.id' => ['required_with:tags', 'integer'],
                 ];
                 break;
 
-            case 'PUT':
-            case 'PATCH':
+            case 'PUT': // PUT replaces the resource
                 $rules = [
-                    'title' => ['string', 'min:5', 'max:100'],
-                    'description' => ['string'],
-                    'status' => [Rule::in(TaskStatus::getValues())],
-                    'priority' => [Rule::in(TaskPriority::getValues())],
-                    'due_date' => ['date'],
-                    'assigned_to' => ['integer', new UserCheck],
-                    'version' => ['integer'],
-                    'metadata' => ['array'],
+                    'title' => ['required', 'string', 'min:5', 'max:100'],
+                    'description' => ['nullable', 'string'],
+                    'status' => ['required', Rule::in(TaskStatus::getValues())],
+                    'priority' => ['required', Rule::in(TaskPriority::getValues())],
+                    'due_date' => ['nullable', 'date'],
+                    'assigned_to' => ['nullable', 'array'],
+                    'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
+                    'metadata' => ['nullable', 'array'],
+                    'tags' => ['nullable', 'array'],
+                    'tags.*.id' => ['required_with:tags', 'integer'],
+                    'version' => ['required', 'integer'],
+                ];
+                break;
+
+            case 'PATCH': // PATCH updates the resource partially
+                $rules = [
+                    'title' => ['nullable', 'string', 'min:5', 'max:100'],
+                    'description' => ['nullable', 'string'],
+                    'status' => ['nullable', Rule::in(TaskStatus::getValues())],
+                    'priority' => ['nullable', Rule::in(TaskPriority::getValues())],
+                    'due_date' => ['nullable', 'date'],
+                    'assigned_to' => ['nullable', 'array'],
+                    'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
+                    'metadata' => ['nullable', 'array'],
                     'tags' => ['nullable', 'array'],
                     'tags.*.id' => ['required_with:tags', 'integer'],
                 ];
@@ -68,6 +84,7 @@ final class TaskRequest extends BaseRequest
         return [
             'title.required' => 'Title is required',
             'status.in' => 'The selected status is invalid. Valid statuses are: ' . implode(', ', TaskStatus::getValues()),
+            'priority.in' => 'The selected priority is invalid. Valid priorities are: ' . implode(', ', TaskPriority::getValues()),
         ];
     }
 
@@ -81,13 +98,12 @@ final class TaskRequest extends BaseRequest
         }
 
         $data = $this->validated();
-
         if (! empty($data['tags'])) {
             $tagIds = array_filter(array_column($data['tags'], 'id'));
             $tagsCount = Tag::whereIn('id', $tagIds)->count();
 
             if (count($tagIds) !== $tagsCount) {
-                $this->validator->errors()->add('tags', 'Invalid tag ids. Some tags not found.');
+                $this->validator->errors()->add('tags', 'Invalid tag ids. Some tags are not found.');
             }
         }
 

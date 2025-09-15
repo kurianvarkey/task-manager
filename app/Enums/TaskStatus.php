@@ -20,9 +20,9 @@ enum TaskStatus: int
     public function toString(): string
     {
         return match ($this) {
-            self::Pending => 'Pending',
-            self::InProgress => 'In Progress',
-            self::Completed => 'Completed',
+            self::Pending => 'pending',
+            self::InProgress => 'inprogress',
+            self::Completed => 'completed',
             default => '',
         };
     }

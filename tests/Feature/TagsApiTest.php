@@ -20,9 +20,9 @@ final class TagsApiTest extends TestCase
     private string $endPoint = '/api/tags';
 
     /**
-     * Test the tag can be created.
+     * Test the tag validations .
      */
-    public function test_tag_can_be_created(): void
+    public function test_check_validations(): void
     {
         // call create api with validation error for empty input
         $this->postWithHeader($this->endPoint, [])
@@ -45,7 +45,13 @@ final class TagsApiTest extends TestCase
                     ->etc()
                 )
             );
+    }
 
+    /**
+     * Test the tag can be created.
+     */
+    public function test_tag_can_be_created(): void
+    {
         // call create api successfully and check response assertions
         $this->postWithHeader($this->endPoint, ['name' => 'Test'])
             ->assertStatus(Response::HTTP_CREATED)
@@ -167,12 +173,34 @@ final class TagsApiTest extends TestCase
 
         $tag = (object) $tag;
         $tag->name = 'Test-updated';
-        $tag->colour = '#FF0000';
+        $tag->color = '#FF0000';
 
         // PUT to update the tag
         $this->putWithHeader($this->endPoint . '/' . $tag->id, (array) $tag)
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.name', 'Test-updated');
+    }
+
+    /**
+     * Test the tag can be patched.
+     */
+    public function test_tag_can_be_patched(): void
+    {
+        // call to create the tag
+        $response = $this->postWithHeader($this->endPoint, ['name' => 'Test', 'color' => '#ff0000']);
+        $tag = $response->json()['data'] ?? [];
+        if (empty($tag)) {
+            $this->fail('Tag not created');
+        }
+
+        $tag = (object) $tag;
+        $tag->name = 'Test-updated';
+
+        // Patch to update the tag partially
+        $this->patchWithHeader($this->endPoint . '/' . $tag->id, (array) $tag)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.name', 'Test-updated')
+            ->assertJsonPath('data.color', '#ff0000');
     }
 
     /**

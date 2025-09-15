@@ -24,7 +24,7 @@ class TaskFactory extends Factory
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
             'due_date' => fake()->date(),
-            'assigned_to' => fake()->randomElement(UserFactory::new()->create()->id),
+            'assigned_to' => UserFactory::new()->create()->id,
             'status' => fake()->randomElement(TaskStatus::cases()),
             'priority' => fake()->randomElement(TaskPriority::cases()),
             'version' => 1,
@@ -38,7 +38,6 @@ class TaskFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Task $task) {
-            // Attach a random number of tags (e.g., between 1 and 3)
             $tags = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id');
             $task->tags()->attach($tags);
         });

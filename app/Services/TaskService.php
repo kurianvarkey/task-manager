@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Tag;
-use Illuminate\Database\Eloquent\Model;
+use App\DTOs\TaskDTO;
+use App\Models\Task;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 final class TaskService extends ServiceBase
@@ -14,10 +14,10 @@ final class TaskService extends ServiceBase
      * Construct the service
      */
     public function __construct(
-        public ?Tag $taskModel = null
+        public ?Task $taskModel = null
     ) {
         if ($this->taskModel === null) {
-            $this->taskModel = new Tag;
+            $this->taskModel = new Task;
         }
     }
 
@@ -33,13 +33,22 @@ final class TaskService extends ServiceBase
 
     /**
      * Store new record
-     *
-     * @param  array  $attributes
-     * @return null|Model
      */
-    public function store(array $input): ?Tag
+    public function store(TaskDTO $dto): ?Task
     {
-        return $this->taskModel->create($input);
+        // Set enums and default values
+        $dto->setDefaults();
+
+        return $this->doDbTransaction(function () use ($dto) {
+            $task = $this->taskModel->create($dto->toArray());
+
+            $tags = $dto->tags();
+            if ($tags) {
+                $task->tags()->attach($tags);
+            }
+
+            return $task->loadMissing(['assignedUser', 'tags']);
+        });
     }
 
     /**
@@ -70,7 +79,7 @@ final class TaskService extends ServiceBase
     /**
      * Find the record by id
      */
-    public function find(int $id): ?Tag
+    public function find(int $id): ?Task
     {
         return $this->taskModel
             ->id($id)
@@ -80,15 +89,27 @@ final class TaskService extends ServiceBase
     /**
      * Update existing record
      */
-    public function update(int $id, array $input): ?Tag
+    public function update(int $id, TaskDTO $dto): ?Task
     {
-        $record = $this->taskModel
+        // Set enums values
+        $dto->setEnums();
+
+        $task = $this->taskModel
             ->id($id)
             ->firstOrFail();
 
-        $record->fill($input)->save();
+        $task = $this->doDbTransaction(function () use ($task, $dto) {
+            $task->fill($dto->toArray())->save();
 
-        return $record->wasChanged() ? $record->refresh() : $record;
+            $tags = $dto->tags();
+            if ($tags) {
+                $task->tags()->sync($tags);
+            }
+
+            return $task->wasChanged() ? $task->refresh() : $task;
+        });
+
+        return $task->loadMissing(['assignedUser', 'tags']);
     }
 
     /**
@@ -96,11 +117,13 @@ final class TaskService extends ServiceBase
      */
     public function delete(int $id): bool
     {
-        $record = $this->taskModel
+        $task = $this->taskModel
             ->select('id')
             ->id($id)
             ->firstOrFail();
 
-        return $record->delete();
+        $task->tags()->detach();
+
+        return $task->delete();
     }
 }

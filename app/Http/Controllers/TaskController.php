@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\DTOs\TaskDTO;
 use App\Helpers\Response\AppResponse;
 use App\Http\Requests\TaskRequest;
+use App\Http\Resources\Task\TaskCollection;
+use App\Http\Resources\Task\TaskResource;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -24,9 +27,11 @@ final class TaskController extends Controller
      */
     public function store(TaskRequest $request): JsonResponse
     {
+        $dto = TaskDTO::fromArray($request->validated(), 'POST');
+
         return AppResponse::sendOk(
             data: new TaskResource(
-                $this->taskService->store($request->validated())
+                $this->taskService->store($dto)
             ),
             statusCode: Response::HTTP_CREATED
         );
@@ -64,11 +69,13 @@ final class TaskController extends Controller
      */
     public function update(int|string $id, TaskRequest $request): JsonResponse
     {
+        $dto = TaskDTO::fromArray($request->validated(), $request->getHttpMethod());
+
         return AppResponse::sendOk(
             data: new TaskResource(
                 $this->taskService->update(
                     (int) $id,
-                    $request->validated()
+                    $dto
                 )
             )
         );

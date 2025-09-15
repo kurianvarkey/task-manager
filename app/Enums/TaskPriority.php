@@ -20,9 +20,9 @@ enum TaskPriority: int
     public function toString(): string
     {
         return match ($this) {
-            self::Low => 'Low',
-            self::Medium => 'Medium',
-            self::High => 'High',
+            self::Low => 'low',
+            self::Medium => 'medium',
+            self::High => 'high',
             default => '',
         };
     }

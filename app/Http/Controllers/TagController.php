@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\DTOs\TagDTO;
 use App\Helpers\Response\AppResponse;
 use App\Http\Requests\TagRequest;
 use App\Http\Resources\Tag\TagCollection;
@@ -26,9 +27,11 @@ final class TagController extends Controller
      */
     public function store(TagRequest $request): JsonResponse
     {
+        $dto = TagDTO::fromArray($request->validated(), 'POST');
+
         return AppResponse::sendOk(
             data: new TagResource(
-                $this->tagService->store($request->validated())
+                $this->tagService->store($dto)
             ),
             statusCode: Response::HTTP_CREATED
         );
@@ -66,11 +69,13 @@ final class TagController extends Controller
      */
     public function update(int|string $id, TagRequest $request): JsonResponse
     {
+        $dto = TagDTO::fromArray($request->validated(), $request->getHttpMethod());
+
         return AppResponse::sendOk(
             data: new TagResource(
                 $this->tagService->update(
                     (int) $id,
-                    $request->validated()
+                    $dto
                 )
             )
         );

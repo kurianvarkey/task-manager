@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DTOs\TagDTO;
 use App\Exceptions\GeneralException;
 use App\Models\Tag;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 final class TagService extends ServiceBase
@@ -34,13 +34,10 @@ final class TagService extends ServiceBase
 
     /**
      * Store new record
-     *
-     * @param  array  $attributes
-     * @return null|Model
      */
-    public function store(array $input): ?Tag
+    public function store(TagDTO $dto): ?Tag
     {
-        return $this->tagModel->create($input);
+        return $this->tagModel->create($dto->toArray());
     }
 
     /**
@@ -81,15 +78,15 @@ final class TagService extends ServiceBase
     /**
      * Update existing record
      */
-    public function update(int $id, array $input): ?Tag
+    public function update(int $id, TagDTO $dto): ?Tag
     {
-        $record = $this->tagModel
+        $tag = $this->tagModel
             ->id($id)
             ->firstOrFail();
 
-        $record->fill($input)->save();
+        $tag->fill($dto->toArray())->save();
 
-        return $record->wasChanged() ? $record->refresh() : $record;
+        return $tag->wasChanged() ? $tag->refresh() : $tag;
     }
 
     /**
@@ -97,15 +94,15 @@ final class TagService extends ServiceBase
      */
     public function delete(int $id): bool
     {
-        $record = $this->tagModel
+        $tag = $this->tagModel
             ->select('id')
             ->id($id)
             ->firstOrFail();
 
-        if ($record->tasks()->select('id')->exists()) {
+        if ($tag->tasks()->select('id')->exists()) {
             throw new GeneralException('Cannot delete this tag as it is used in tasks');
         }
 
-        return $record->delete();
+        return $tag->delete();
     }
 }

@@ -69,6 +69,20 @@ trait Common
     }
 
     /**
+     * Patch json with header.
+     */
+    public function patchWithHeader(string $endPoint, array $data)
+    {
+        return $this->withHeaders(
+            [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Accept' => 'application/json',
+            ]
+        )
+            ->patchJson($endPoint, $data);
+    }
+
+    /**
      * Delete json with header.
      */
     public function deleteWithHeader(string $endPoint)

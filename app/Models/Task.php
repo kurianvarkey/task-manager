@@ -42,6 +42,7 @@ class Task extends Model
     protected $attributes = [
         'status' => TaskStatus::Pending,
         'priority' => TaskPriority::Medium,
+        'version' => 1,
     ];
 
     /**
@@ -64,7 +65,7 @@ class Task extends Model
      */
     public function assignedUser(): BelongsTo
     {
-        return $this->belongsTo(User::class)->select(['id', 'name', 'email']);
+        return $this->belongsTo(User::class, 'assigned_to')->select(['id', 'name', 'email']);
     }
 
     /**
@@ -72,7 +73,7 @@ class Task extends Model
      */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'task_tags', 'task_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'task_tags', 'task_id', 'tag_id')->select(['id', 'name', 'color']);
     }
 
     /**
