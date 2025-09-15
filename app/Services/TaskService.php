@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\TaskDTO;
+use App\Enums\Role;
 use App\Enums\TaskStatus;
 use App\Exceptions\GeneralException;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 
 final class TaskService extends ServiceBase
 {
+    private User $authUser;
+
     /**
      * Construct the service
      */
@@ -23,6 +28,8 @@ final class TaskService extends ServiceBase
         if ($this->taskModel === null) {
             $this->taskModel = new Task;
         }
+
+        $this->authUser = auth()?->user();
     }
 
     /**
@@ -42,9 +49,15 @@ final class TaskService extends ServiceBase
     {
         // Set enums and default values
         $dto->setDefaults();
+        $taskData = $dto->toArray();
 
-        return $this->doDbTransaction(function () use ($dto) {
-            $task = $this->taskModel->create($dto->toArray());
+        // if the logged in user is a user, assign the task to the user
+        if (empty($taskData['assigned_to']) && $this->authUser?->role === Role::User) {
+            $taskData['assigned_to'] = $this->authUser->id;
+        }
+
+        return $this->doDbTransaction(function () use ($taskData, $dto) {
+            $task = $this->taskModel->create($taskData);
 
             $tags = $dto->tags();
             if ($tags) {
@@ -61,6 +74,10 @@ final class TaskService extends ServiceBase
     public function list(?array $filters = [], ?int $limit = null, ?string $sortField = null, ?string $sortDirection = null): LengthAwarePaginator
     {
         $query = $this->taskModel->newQuery();
+
+        if ($this->authUser?->role === Role::User) {
+            $query->assignedTo($this->authUser->id);
+        }
 
         // Apply filters
         $this->applyFilters($query, $filters);
@@ -87,7 +104,13 @@ final class TaskService extends ServiceBase
      */
     public function find(int $id): ?Task
     {
-        return $this->taskModel->id($id)->firstOrFail();
+        $task = $this->taskModel->id($id)
+            ->with(['assignedUser', 'tags'])
+            ->firstOrFail();
+
+        Gate::authorize('view', $task);
+
+        return $task;
     }
 
     /**
@@ -104,9 +127,11 @@ final class TaskService extends ServiceBase
             throw new GeneralException('Version is required');
         }
 
-        $task = $this->doDbTransaction(function () use ($id, $taskData, $dto, $httpMethod) {
-            $task = $this->taskModel->id($id)->firstOrFail();
+        $task = $this->taskModel->id($id)->firstOrFail();
 
+        Gate::authorize('update', $task);
+
+        $task = $this->doDbTransaction(function () use ($task, $taskData, $dto, $httpMethod) {
             if ($httpMethod === 'PUT') {
                 if ($task->version !== $taskData['version']) {
                     throw new GeneralException('This task has been updated by someone else and there is a newer version of this task exists', Response::HTTP_CONFLICT);
@@ -135,11 +160,13 @@ final class TaskService extends ServiceBase
     public function delete(int $id): bool
     {
         $task = $this->taskModel
-            ->select('id')
+            ->select(['id', 'assigned_to'])
             ->id($id)
             ->firstOrFail();
 
-        // If in future we need permanent delete, then uncomment following line
+        Gate::authorize('delete', $task);
+
+        // In future, if we need permanent delete, then uncomment following line
         // $task->tags()->detach();
 
         return $task->delete();
@@ -151,6 +178,8 @@ final class TaskService extends ServiceBase
     public function toggleStatus(int $id): Task
     {
         $task = $this->taskModel->id($id)->firstOrFail();
+
+        Gate::authorize('update', $task);
 
         $task->status = match ($task->status) {
             TaskStatus::Pending => TaskStatus::InProgress,
@@ -168,6 +197,8 @@ final class TaskService extends ServiceBase
     public function restore(int $id): Task
     {
         $task = $this->taskModel->withTrashed()->id($id)->firstOrFail();
+
+        Gate::authorize('restore', $task);
 
         $task->restore();
 

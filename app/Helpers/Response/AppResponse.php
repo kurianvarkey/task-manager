@@ -25,7 +25,7 @@ class AppResponse
 {
     /**
      * Get default headers
-     * 
+     *
      * @codeCoverageIgnore
      */
     public static function getDefaultHeaders(bool $isAllowOrigin = true): array
@@ -39,7 +39,7 @@ class AppResponse
 
     /**
      * Get allow headers
-     * 
+     *
      * @codeCoverageIgnore
      */
     public static function getAllowHeaders(): string
@@ -96,7 +96,7 @@ class AppResponse
 
     /**
      * Send Throttle response
-     * 
+     *
      * @codeCoverageIgnore
      */
     public static function sendThrottle(string $errorMessage, array $headers = []): JsonResponse

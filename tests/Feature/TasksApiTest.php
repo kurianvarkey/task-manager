@@ -247,7 +247,7 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the task can be deleted.
+     * Test the task can be deleted and restored.
      */
     public function test_task_can_be_restored(): void
     {
