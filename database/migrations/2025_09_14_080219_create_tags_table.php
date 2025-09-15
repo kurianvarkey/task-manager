@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100)->unique()->index('tags_name');
             $table->string('color', 25)->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('created_at')->nullable()->index('tags_created_at');
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable()->index('tags_deleted_at');
         });
     }
 

@@ -28,7 +28,7 @@ final class TagService extends ServiceBase
     public function sortableFields(): array
     {
         return [
-            'name',
+            'name', 'created_at',
         ];
     }
 
