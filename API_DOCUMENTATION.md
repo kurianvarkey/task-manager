@@ -209,7 +209,7 @@ Retrieve a list of tasks with optional filtering.
 | priority | string | No | Filter by priority | `low`, `medium`, `high` |
 | assigned_to | integer | No | Filter by assigned user ID | User ID |
 | tags | string | No | Filter by tag IDs | Comma-separated tag IDs (e.g., "1,2,3") |
-| due_date_range | string | No | Filter by due date range | Date range format |
+| due_date_range | string | No | Filter by due date range | Date range format - date1,date2 (e.g., "2025-01-01,2025-12-31") |
 | keyword | string | No | Search in title/description | Search term |
 | only_deleted | boolean | No | Show only deleted tasks | `true`, `false` |
 | limit | integer | No | Number of results per page | Default: 15 |
