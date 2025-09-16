@@ -210,7 +210,7 @@ function clearFilters() {
     if (filterDeleted) filterDeleted.checked = false;
     if (filterTags.length) {
         filterTags.selectpicker('deselectAll');
-        filterTags.selectpicker('refresh');
+        //filterTags.selectpicker('refresh');
     }
 
     loadTasks(1);
