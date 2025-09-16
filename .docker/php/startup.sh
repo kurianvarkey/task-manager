@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /var/www
+
 echo "Running the atrisan migrate for dev db"
 php artisan migrate
 

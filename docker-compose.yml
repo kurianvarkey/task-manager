@@ -47,11 +47,11 @@ services:
     ports:
       - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: task_manager
       MYSQL_USER: task_manager_user
-      MYSQL_PASSWORD: task_manager_123456      
+      MYSQL_PASSWORD: ${DB_PASSWORD}      
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 3s
