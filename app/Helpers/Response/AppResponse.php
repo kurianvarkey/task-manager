@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace App\Helpers\Response;
 
 use App\Helpers\Validator\ValidationErrorFormatter;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
@@ -25,8 +24,6 @@ class AppResponse
 {
     /**
      * Get default headers
-     *
-     * @codeCoverageIgnore
      */
     public static function getDefaultHeaders(bool $isAllowOrigin = true): array
     {
@@ -39,8 +36,6 @@ class AppResponse
 
     /**
      * Get allow headers
-     *
-     * @codeCoverageIgnore
      */
     public static function getAllowHeaders(): string
     {
@@ -65,8 +60,6 @@ class AppResponse
 
     /**
      * Send error response
-     *
-     * @throws BindingResolutionException
      */
     public static function sendError(
         int|string $statusCode = Response::HTTP_BAD_REQUEST,
@@ -82,11 +75,9 @@ class AppResponse
             $errors = [ValidationErrorFormatter::formatError(message: $errorMessages, errorCode: $errorCode)];
         }
 
-        // @codeCoverageIgnoreStart
         if ($statusCode > 1000) {
             $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
-        // @codeCoverageIgnoreEnd
 
         return response()->json([
             'status' => 'failed',
@@ -96,8 +87,6 @@ class AppResponse
 
     /**
      * Send Throttle response
-     *
-     * @codeCoverageIgnore
      */
     public static function sendThrottle(string $errorMessage, array $headers = []): JsonResponse
     {

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Traits;
 
+use App\Enums\Role;
 use App\Models\User;
 
 trait Common
@@ -19,7 +20,7 @@ trait Common
         parent::setUp();
 
         $this->apiKey = str()->random(60);
-        User::factory(['api_key' => $this->apiKey])->create();
+        User::factory(['api_key' => $this->apiKey, 'role' => Role::Admin])->create();
     }
 
     /**

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\DTOs\TaskDTO;
 use App\Helpers\Response\AppResponse;
 use App\Http\Requests\TaskRequest;
+use App\Http\Resources\Task\Log\TaskLogCollection;
 use App\Http\Resources\Task\TaskCollection;
 use App\Http\Resources\Task\TaskResource;
 use App\Services\TaskService;
@@ -114,6 +115,18 @@ final class TaskController extends Controller
         return AppResponse::sendOk(
             data: new TaskResource(
                 $this->taskService->restore((int) $id)
+            )
+        );
+    }
+
+    /**
+     * Get logs
+     */
+    public function logs(int|string $id): JsonResponse
+    {
+        return AppResponse::sendOk(
+            data: new TaskLogCollection(
+                $this->taskService->getLogs((int) $id)
             )
         );
     }

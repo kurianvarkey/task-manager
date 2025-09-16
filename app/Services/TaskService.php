@@ -206,6 +206,22 @@ final class TaskService extends ServiceBase
     }
 
     /**
+     * Get logs
+     */
+    public function getLogs(int $id): LengthAwarePaginator
+    {
+        $task = $this->taskModel->id($id)->firstOrFail();
+
+        Gate::authorize('view', $task);
+
+        return $task->logs()
+            ->with(['createdBy'])
+            ->orderByDesc('id')
+            ->orderByDesc('created_at')
+            ->paginate(self::DEFAULT_PAGINATION_LIMIT);
+    }
+
+    /**
      * Apply filters
      */
     private function applyFilters(Builder $query, $filters): void
@@ -235,6 +251,10 @@ final class TaskService extends ServiceBase
         // filter by keywords
             ->when(! empty($filters['keyword']), function ($query) use ($filters) {
                 $query->keyword($filters['keyword']);
+            })
+        // filter by only_deleted (soft deleted) tasks
+            ->when(! empty($filters['only_deleted']), function ($query) {
+                $query->onlyTrashed();
             });
     }
 }

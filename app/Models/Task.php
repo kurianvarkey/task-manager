@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Models\Traits\Auditable;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
+    use Auditable, HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -150,9 +151,9 @@ class Task extends Model
             $startDate = Carbon::parse($dates[0]);
             if (isset($dates[1]) && trim($dates[1]) !== '') {
                 $endDate = Carbon::parse($dates[1]);
-            } else {
-                $endDate = $startDate;
             }
+
+            $endDate = $endDate ?? $startDate;
 
             if ($endDate->lessThan($startDate)) {
                 $endDate = $startDate;

@@ -28,8 +28,7 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $apiKey = $request->bearerToken() ?? $this->extractTokenFromAuthorizationHeader($request);
-        $apiKey = trim($apiKey ?? '', '"');
+        $apiKey = trim($request->bearerToken() ?? '', '"');
         if ($apiKey) {
             // we will cache for n minutes
             $user = Cache::remember($apiKey, now()->addMinutes(self::CACHE_USER_IN_MINUTES), function () use ($apiKey) {
@@ -48,24 +47,5 @@ class Authenticate
             errorMessages: 'Unauthorized attempt',
             errorCode: Response::HTTP_UNAUTHORIZED
         );
-    }
-
-    /**
-     * Extracts the token from the Authorization header.
-     *
-     * @param  Request  $request  The request object.
-     * @return string|null The extracted token or null if not found.
-     */
-    private function extractTokenFromAuthorizationHeader(Request $request): ?string
-    {
-        $authorizationHeader = $request->header('Authorization');
-        if ($authorizationHeader) {
-            $parts = explode(' ', $authorizationHeader);
-            if ($parts && count($parts) === 2 && strtolower($parts[0]) === 'bearer') {
-                return $parts[1];
-            }
-        }
-
-        return null;
     }
 }

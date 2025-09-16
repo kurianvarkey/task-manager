@@ -48,17 +48,19 @@ final class TasksApiTest extends TestCase
             'assigned_to' => 'test',
             'metadata' => 'test',
             'tags' => 'test',
-        ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+        ])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJson(fn (AssertableJson $json) => $json->where('status', 'failed')
-                ->has('errors', 8)
+                ->has('errors', 9)
                 ->has('errors.0', fn (AssertableJson $json) => $json->where('key', 'title')->etc())
                 ->has('errors.1', fn (AssertableJson $json) => $json->where('key', 'status')->etc())
                 ->has('errors.2', fn (AssertableJson $json) => $json->where('key', 'priority')->etc())
                 ->has('errors.3', fn (AssertableJson $json) => $json->where('key', 'due_date')->etc())
-                ->has('errors.4', fn (AssertableJson $json) => $json->where('key', 'assigned_to')->etc())
-                ->has('errors.5', fn (AssertableJson $json) => $json->where('key', 'assigned_to.id')->etc())
-                ->has('errors.6', fn (AssertableJson $json) => $json->where('key', 'metadata')->etc())
-                ->has('errors.7', fn (AssertableJson $json) => $json->where('key', 'tags')->etc())
+                ->has('errors.4', fn (AssertableJson $json) => $json->where('key', 'due_date')->etc())
+                ->has('errors.5', fn (AssertableJson $json) => $json->where('key', 'assigned_to')->etc())
+                ->has('errors.6', fn (AssertableJson $json) => $json->where('key', 'assigned_to.id')->etc())
+                ->has('errors.7', fn (AssertableJson $json) => $json->where('key', 'metadata')->etc())
+                ->has('errors.8', fn (AssertableJson $json) => $json->where('key', 'tags')->etc())
             );
 
         // call create api with validation error for non existing user
@@ -269,7 +271,7 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be created with filter.
+     * Test the tasks can be created with filter.
      */
     public function test_tasks_can_be_listed(): void
     {
@@ -281,7 +283,7 @@ final class TasksApiTest extends TestCase
             ->assertJsonPath('data.meta.total', 0)
             ->assertJsonPath('data.results', []);
 
-        // create 10 tags
+        // create 10 tasks
         Task::factory()->count($count)->create();
 
         $this->getWithHeader($this->endPoint)
@@ -306,9 +308,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with status filter.
+     * Test the tasks can be listed with status filter.
      */
-    public function test_tags_can_be_listed_with_status_filter(): void
+    public function test_tasks_can_be_listed_with_status_filter(): void
     {
         // create tasks
         Task::factory()->count(6)
@@ -347,9 +349,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with priority filter.
+     * Test the tasks can be listed with priority filter.
      */
-    public function test_tags_can_be_listed_with_priority_filter(): void
+    public function test_tasks_can_be_listed_with_priority_filter(): void
     {
         // create tasks
         Task::factory()->count(6)
@@ -388,9 +390,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with assigned_to filter.
+     * Test the tasks can be listed with assigned_to filter.
      */
-    public function test_tags_can_be_listed_with_assigned_to_filter(): void
+    public function test_tasks_can_be_listed_with_assigned_to_filter(): void
     {
         // create user
         $user = User::factory()->create();
@@ -415,9 +417,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with due_date_range filter.
+     * Test the tasks can be listed with due_date_range filter.
      */
-    public function test_tags_can_be_listed_with_due_date_range_filter(): void
+    public function test_tasks_can_be_listed_with_due_date_range_filter(): void
     {
         // create tasks
         $now = now();
@@ -485,9 +487,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with tags filter.
+     * Test the tasks can be listed with tags filter.
      */
-    public function test_tags_can_be_listed_with_tags_filter(): void
+    public function test_tasks_can_be_listed_with_tags_filter(): void
     {
         // create tasks
         Tag::factory()->count(5)
@@ -556,9 +558,9 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be listed with keyword filter.
+     * Test the tasks can be listed with keyword filter.
      */
-    public function test_tags_can_be_listed_with_keyword_filter(): void
+    public function test_tasks_can_be_listed_with_keyword_filter(): void
     {
         // create tasks
         Task::factory()->count(3)
@@ -590,7 +592,7 @@ final class TasksApiTest extends TestCase
     }
 
     /**
-     * Test the tags can be sorted with sort column.
+     * Test the tasks can be sorted with sort column.
      */
     public function test_tasks_can_be_listed_with_sort_column(): void
     {
@@ -626,5 +628,73 @@ final class TasksApiTest extends TestCase
         $response = $this->getWithHeader($this->endPoint, $filters);
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.results.0.title', 'Task 1');
+    }
+
+    /**
+     * Test the tasks can be listed with assigned_to filter.
+     */
+    public function test_tasks_can_be_listed_with_only_deleted_filter(): void
+    {
+        // create tasks of 5 and take 3
+        $tasks = Task::factory()->count(5)->create()->take(3);
+
+        // expected results 5 tasks
+        $this->getWithHeader($this->endPoint)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.meta.total', 5)
+            ->assertJsonCount(5, 'data.results');
+
+        // delete 3 tasks
+        foreach ($tasks as $task) {
+            $task->delete();
+        }
+
+        // expected results 3 tasks
+        $this->getWithHeader($this->endPoint, ['only_deleted' => true])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.meta.total', 3)
+            ->assertJsonCount(3, 'data.results');
+    }
+
+    /**
+     * Test the tasks can be listed with keyword filter.
+     */
+    public function test_tasks_logs_can_be_listed(): void
+    {
+        // create task
+        $task = Task::factory()->create();
+
+        $this->getWithHeader($this->endPoint . '/' . $task->id . '/logs')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.meta.total', 1)
+            ->assertJsonCount(1, 'data.results')
+            ->assertJsonPath('data.results.0.operation_type', 'created');
+
+        // update task
+        $task->title = 'Task 1';
+        $task->save();
+
+        // now we have 2 logs
+        $this->getWithHeader($this->endPoint . '/' . $task->id . '/logs')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.meta.total', 2)
+            ->assertJsonPath('data.results.0.operation_type', 'updated');
+
+        // delete task
+        $task->delete();
+
+        // now we have 3 logs
+        $this->getWithHeader($this->endPoint . '/' . $task->id . '/logs')
+            ->assertStatus(Response::HTTP_NOT_FOUND);
+
+        // restore task
+        $task = Task::withTrashed()->find($task->id);
+        $task->restore();
+
+        // now we have 4 logs
+        $this->getWithHeader($this->endPoint . '/' . $task->id . '/logs')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.meta.total', 4)
+            ->assertJsonPath('data.results.0.operation_type', 'restored');
     }
 }

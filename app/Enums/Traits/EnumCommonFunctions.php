@@ -19,7 +19,6 @@ trait EnumCommonFunctions
      */
     public static function fromString(?string $name): ?self
     {
-        // @codeCoverageIgnoreStart
         if (is_null($name)) {
             return null;
         }
@@ -28,7 +27,6 @@ trait EnumCommonFunctions
         if (! $item = array_search($name, $items, true)) {
             return null;
         }
-        // @codeCoverageIgnoreEnd
 
         return self::from($item);
     }

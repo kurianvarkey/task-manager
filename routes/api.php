@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Response\AppResponse;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Middlewares\Authenticate;
@@ -27,6 +28,14 @@ Route::fallback(function () {
     );
 });
 
+Route::middleware('throttle:auth')->group(function () {
+    // Signup endpoint
+    Route::post('/signup', [AuthController::class, 'signup']);
+
+    // Login endpoint
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
 // Authentication Routes
 Route::middleware(Authenticate::class)->group(function () {
     Route::apiResource('tags', TagController::class);
@@ -37,4 +46,7 @@ Route::middleware(Authenticate::class)->group(function () {
 
     // For restore
     Route::patch('tasks/{taskId}/restore', [TaskController::class, 'restore']);
+
+    // For logs
+    Route::get('tasks/{taskId}/logs', [TaskController::class, 'logs']);
 });

@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Http\Requests\Rules\Boolean;
 use App\Http\Requests\Rules\DateRange;
 use App\Http\Requests\Rules\UserCheck;
 use App\Models\Tag;
@@ -26,7 +27,7 @@ final class TaskRequest extends BaseRequest
                     'description' => ['string'],
                     'status' => [Rule::in(TaskStatus::getValues())],
                     'priority' => [Rule::in(TaskPriority::getValues())],
-                    'due_date' => ['nullable','date','after_or_equal:today'],
+                    'due_date' => ['nullable', 'date', 'after_or_equal:today'],
                     'assigned_to' => ['nullable', 'array'],
                     'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
                     'metadata' => ['nullable', 'array'],
@@ -41,7 +42,7 @@ final class TaskRequest extends BaseRequest
                     'description' => ['nullable', 'string'],
                     'status' => ['required', Rule::in(TaskStatus::getValues())],
                     'priority' => ['required', Rule::in(TaskPriority::getValues())],
-                    'due_date' => ['nullable','date','after_or_equal:today'],
+                    'due_date' => ['nullable', 'date', 'after_or_equal:today'],
                     'assigned_to' => ['nullable', 'array'],
                     'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
                     'metadata' => ['nullable', 'array'],
@@ -57,7 +58,7 @@ final class TaskRequest extends BaseRequest
                     'description' => ['nullable', 'string'],
                     'status' => ['nullable', Rule::in(TaskStatus::getValues())],
                     'priority' => ['nullable', Rule::in(TaskPriority::getValues())],
-                    'due_date' => ['nullable','date','after_or_equal:today'],
+                    'due_date' => ['nullable', 'date', 'after_or_equal:today'],
                     'assigned_to' => ['nullable', 'array'],
                     'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
                     'metadata' => ['nullable', 'array'],
@@ -75,6 +76,7 @@ final class TaskRequest extends BaseRequest
                     'tags' => ['nullable', 'string', 'regex:/^(\d+,)*\d+$/'],
                     'due_date_range' => ['nullable', new DateRange],
                     'keyword' => ['nullable', 'string'],
+                    'only_deleted' => ['nullable', new Boolean],
                 ];
                 break;
         }

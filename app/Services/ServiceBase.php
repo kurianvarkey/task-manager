@@ -45,22 +45,9 @@ abstract class ServiceBase
     public const RETRY_AFTER = 100000; // 100ms
 
     /**
-     * Construct the service
-     */
-    public function __construct() {}
-
-    /**
      * Get the sortable fields
      */
     abstract public function sortableFields(): array;
-
-    /**
-     * Get the default pagination limit
-     */
-    public function getDefaultLimit(): int
-    {
-        return self::DEFAULT_PAGINATION_LIMIT;
-    }
 
     /**
      * Get the sortable fields
@@ -79,6 +66,8 @@ abstract class ServiceBase
      *
      * @param  mixed  $callback
      * @return mixed|exception
+     *
+     * @codeCoverageIgnore
      */
     protected function doDbTransaction($callback, bool $retryOnUniqueError = false)
     {

@@ -22,8 +22,12 @@ class TaskResource extends JsonResource
             'id' => $this->whenHas('id'),
             'title' => $this->whenHas('title'),
             'description' => $this->whenHas('description'),
-            'status' => $this->whenHas('status')?->value,
-            'priority' => $this->whenHas('priority')?->value,
+            'status' => $this->whenHas('status', function () {
+                return $this->status ? $this->status?->value : '';
+            }),
+            'priority' => $this->whenHas('priority', function () {
+                return $this->priority ? $this->priority?->value : '';
+            }),
             'due_date' => $this->whenHas('due_date'),
             'assigned_to' => new UserResource($this->whenLoaded('assignedUser')),
             'metadata' => $this->whenHas('metadata'),

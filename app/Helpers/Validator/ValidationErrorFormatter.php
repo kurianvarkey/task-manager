@@ -23,9 +23,7 @@ class ValidationErrorFormatter
     public static function formatValidationErrors(array|string $errorMessages): array
     {
         if (is_string($errorMessages)) {
-            // @codeCoverageIgnoreStart
             return [self::formatError($errorMessages)];
-            // @codeCoverageIgnoreEnd
         }
 
         $errors = [];
@@ -52,7 +50,7 @@ class ValidationErrorFormatter
         string $message,
         string $errorType = 'system',
         ?string $errorKey = null,
-        ?int $errorCode = null
+        int|string|null $errorCode = null
     ): array {
         return array_filter([
             'type' => $errorType,

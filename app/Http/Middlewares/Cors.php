@@ -13,6 +13,8 @@ class Cors
 {
     /**
      * Handle an incoming request and set CORS headers.
+     *
+     * @codeCoverageIgnore
      */
     public function handle(Request $request, Closure $next): Response
     {
