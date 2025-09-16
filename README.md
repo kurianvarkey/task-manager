@@ -101,7 +101,7 @@ For the scope of the project, I have only tested Tag and Task endpoints.
     chmod +x setup.sh
     ./setup.sh
     #or
-    bash test.sh
+    bash setup.sh
     ```
 
     The setup script will:
