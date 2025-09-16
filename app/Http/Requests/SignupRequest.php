@@ -16,10 +16,11 @@ final class SignupRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email:rfc,dns,spoof', 'max:100', 'unique:users,email'],
+            'email' => ['required', 'string', 'email:rfc', 'max:100', 'unique:users,email'],
             'name' => ['required', 'string', 'max:100'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
-            'password_confirmation' => ['required_with:password', 'string'],
+            // 'password' => ['required', Password::defaults(), 'confirmed'],
+            // 'password_confirmation' => ['required_with:password', 'string'],
+            'password' => ['required', Password::defaults()],
             'role' => ['required',  Rule::in(Role::getValues())],
         ];
     }

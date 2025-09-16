@@ -20,7 +20,7 @@ class LoginResource extends JsonResource
             'name' => $this->whenHas('name'),
             'email' => $this->whenHas('email'),
             'role' => $this->whenHas('role'),
-            'api_key' => $this->whenHas('api_key'),
+            'token' => $this->whenHas('api_key'),
         ];
     }
 }

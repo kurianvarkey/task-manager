@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('color', 25)->nullable();
             $table->timestamp('created_at')->nullable()->index('tags_created_at');
             $table->timestamp('updated_at')->nullable();
-            $table->timestamp('deleted_at')->nullable()->index('tags_deleted_at');
         });
     }
 
