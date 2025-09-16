@@ -197,7 +197,7 @@ Create a new task.
         "assigned_to": {
             "id": 1,
             "name": "Admin User",
-            "email": "admin@net4ideas.com"
+            "email": "test@test.com"
         },
         "metadata": {
             "meta": "test"
@@ -267,7 +267,7 @@ GET /api/tasks?status=pending&priority=high&limit=10&page=1
                 "assigned_to": {
                     "id": 1,
                     "name": "Admin User",
-                    "email": "admin@net4ideas.com"
+                    "email": "test@test.com"
                 },
                 "metadata": {
                     "meta": "test"
@@ -315,7 +315,7 @@ Retrieve a specific task by ID.
         "assigned_to": {
             "id": 1,
             "name": "Admin User",
-            "email": "admin@net4ideas.com"
+            "email": "test@test.com"
         },
         "metadata": {
             "meta": "test"
