@@ -3,6 +3,7 @@
 @section('title', 'Dashboard - Task Manager')
 
 @section('content')
+
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -141,9 +142,18 @@ function displayRecentTasks(tasks) {
         container.innerHTML = '<p class="text-muted">No tasks found.</p>';
         return;
     }
-    
+
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    };
+   
     let html = '<div class="list-group">';
     tasks.forEach(task => {
+        let dueDate = task?.due_date || '';
+        dueDate = dueDate ? new Intl.DateTimeFormat('en-GB', options).format(new Date(dueDate)) : 'No due date';
+
         const statusBadge = getStatusBadge(task.status);
         const priorityBadge = getPriorityBadge(task.priority);
         
@@ -151,7 +161,7 @@ function displayRecentTasks(tasks) {
             <div class="list-group-item">
                 <div class="d-flex w-100 justify-content-between">
                     <h6 class="mb-1">${task.title}</h6>
-                    <small>${task.due_date || 'No due date'}</small>
+                    <small>${dueDate}</small>
                 </div>
                 <p class="mb-1">${task.description || 'No description'}</p>
                 <div class="d-flex justify-content-between">
