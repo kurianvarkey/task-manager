@@ -9,8 +9,8 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 - Admin and user role management
 - Docker containerization support
 - SQLite or MySQL database integration
-- Real-time logging and monitoring
-- API documentation in Markdown format - API_DOCUMENTATION.md
+- Model event logging using Eloquent events (Task logs)
+- API documentation in Markdown format - [API Documentation](API_DOCUMENTATION.md)
 
 ## Scope of the project
 - Develop REST API with best practices
