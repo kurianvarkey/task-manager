@@ -233,7 +233,7 @@ Retrieve a list of tasks with optional filtering.
 | due_date_range | string | No | Filter by due date range | Date range format - date1,date2 (e.g., "2025-01-01,2025-12-31") |
 | keyword | string | No | Search in title/description | Search term |
 | only_deleted | boolean | No | Show only deleted tasks | `true`, `false` |
-| limit | integer | No | Number of results per page | Default: 15 |
+| limit | integer | No | Number of results per page | Default: 15, Max: 50 |
 | page | integer | No | Page number | Default: 1 |
 
 **Request Example:**
