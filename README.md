@@ -29,6 +29,20 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 -   Docker and Docker Compose (for containerized setup)
 -   SQLite or MySQL (Docker has mysql service)
 
+## Simple Setup with sqlite
+
+```
+git clone https://github.com/kurianvarkey/task-manager.git && 
+cd task-manager && 
+cp .env.example .env && 
+touch database/database.sqlite &&
+composer install &&
+php artisan key:generate &&
+php artisan migrate &&
+php artisan serve
+```
+
+
 ## Postman Collection
 
 You can find a Postman collection for testing the API endpoints at postman directory.
