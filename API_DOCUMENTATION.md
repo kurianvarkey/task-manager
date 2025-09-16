@@ -338,8 +338,8 @@ Update all fields of a task.
 {
     "title": "Task 1- updated",
     "description": "description",
-    "status": "pending", //pending, inprogress, completed
-    "priority": "medium", //low, medium, high
+    "status": "pending",
+    "priority": "medium",
     "due_date": "2025-10-01",
     "assigned_to": {
         "id": 1
