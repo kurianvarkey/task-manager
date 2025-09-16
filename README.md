@@ -4,12 +4,23 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 
 ## Features
 
--   Complete REST API for task management
--   User authentication with API keys (token based authentication)
--   Admin and user role management
--   Docker containerization support
--   SQLite or MySQL database integration
--   Real-time logging and monitoring
+- Complete REST API for task management
+- User authentication with API keys (token based authentication)
+- Admin and user role management
+- Docker containerization support
+- SQLite or MySQL database integration
+- Real-time logging and monitoring
+- API documentation in Markdown format - API_DOCUMENTATION.md
+
+## Scope of the project
+- Develop REST API with best practices
+- Implement indexes for better performance
+- Implement validation and error handling
+- Implement authentication and authorization
+- Implement logging and monitoring
+- Implement eager loading for better performance
+- Soft delete & restore for tasks
+- Audit logs for task with elloquent events
 
 ## Requirements
 
@@ -21,6 +32,7 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 ## Postman Collection
 
 You can find a Postman collection for testing the API endpoints at postman directory.
+
 
 ## Testing
 
@@ -36,6 +48,27 @@ php artisan test
 ```
 
 For the scope of the project, I have only tested Tag and Task endpoints.
+
+## API Endpoints
+
+### Tag
+- GET /tags – list all tags 
+- POST /tags – create tag 
+- PUT /tags/{id} – update tag 
+- PATCH /tags/{id} – update tag partially
+- DELETE /tags/{id} – delete tag
+
+
+### Task
+
+- GET /tasks – list all tasks. Filters: status, priority, assigned_to, due_date_range, tags, keyword (title/description)
+- GET /tasks/{id} – get task by ID, including tags and assigned user 
+- POST /tasks – create a new task, supports assigning tags and user 
+- PUT /tasks/{id} – update a task (use optimistic locking with version) 
+- PATCH /tasks/{id}/toggle-status – cycle status: pending → in_progress → completed → pending 
+- DELETE /tasks/{id} – soft delete task 
+- PATCH /tasks/{id}/restore – restore soft-deleted task
+
 
 ## Installation & Setup
 
