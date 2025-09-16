@@ -45,12 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 const response = await axios.post(LOGIN_URL, { email, password });
-
-                console.log(response.data);
                 
                 if (response.data.status === 'success') {
+                    const currentUser = response.data.data || {};
+
                     localStorage.setItem('authToken', response.data.data.token);
-                    localStorage.setItem('currentUser', JSON.stringify(response.data.data));
+
+                    delete currentUser.token;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
                     
                     showAlert('Login successful!', 'success');
                     setTimeout(() => {
