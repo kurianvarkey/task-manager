@@ -38,11 +38,9 @@ class TaskDTO
         self::$httpMethod = $httpMethod;
 
         $title = $data['title'] ?? null;
-        // @codeCoverageIgnoreStart
         if (self::$httpMethod === 'POST' && empty($title)) {
             throw new InvalidArgumentException('Title is required');
         }
-        // @codeCoverageIgnoreEnd
 
         return new self(
             title: $title,

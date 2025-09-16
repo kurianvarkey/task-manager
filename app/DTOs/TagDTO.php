@@ -29,11 +29,9 @@ class TagDTO
         self::$httpMethod = $httpMethod;
 
         $name = $data['name'] ?? null;
-        // @codeCoverageIgnoreStart
         if (self::$httpMethod === 'POST' && empty($name)) {
             throw new InvalidArgumentException('Name is required');
         }
-        // @codeCoverageIgnoreEnd
 
         return new self(
             name: $name,
