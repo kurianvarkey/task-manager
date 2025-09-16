@@ -3,6 +3,10 @@ let currentTasksPage = 1;
 let tasksPerPage = 10;
 let tasksMeta = {};
 
+// Sorting variables
+let currentSortField = null;
+let currentSortDirection = 'asc';
+
 // Tasks functions
 async function loadTasks(page = 1) {
     try {
@@ -43,6 +47,12 @@ async function loadTasks(page = 1) {
             }
         }
 
+        // Add sorting parameters
+        if (currentSortField) {
+            params.append('sort', currentSortField);
+            params.append('direction', currentSortDirection);
+        }
+
         const response = await axios.get(`/tasks?${params.toString()}`);
 
         if (response.data.success || response.data.status === 'success') {
@@ -77,7 +87,34 @@ function displayTasks(tasks) {
     }
 
     let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>';
-    html += '<th>Title</th><th>Status</th><th>Priority</th><th>Due Date</th><th>Assigned To</th><th>Tags</th><th class="text-end">Actions</th>';
+
+    // Sortable columns
+    const sortableColumns = [
+        { field: 'title', label: 'Title' },
+        { field: 'status', label: 'Status' },
+        { field: 'priority', label: 'Priority' },
+        { field: 'due_date', label: 'Due Date' },   
+        { field: null, label: 'Assigned To' }, // Not sortable for now
+        { field: null, label: 'Tags' }, // Not sortable for now
+        { field: 'created_at', label: 'Created' },
+        { field: null, label: 'Actions', class: 'text-end' } // Not sortable
+    ];
+
+    sortableColumns.forEach(column => {
+        if (column.field) {
+            const isActive = currentSortField === column.field;
+            const sortIcon = isActive
+                ? (currentSortDirection === 'asc' ? '<i class="fas fa-sort-up ms-1"></i>' : '<i class="fas fa-sort-down ms-1"></i>')
+                : '<i class="fas fa-sort ms-1 text-muted"></i>';
+
+            html += `<th class="${column.class || ''}" style="cursor: pointer;" onclick="sortTasks('${column.field}')">
+                ${column.label}${sortIcon}
+            </th>`;
+        } else {
+            html += `<th class="${column.class || ''}">${column.label}</th>`;
+        }
+    });
+
     html += '</tr></thead><tbody>';
 
     const options = {
@@ -90,6 +127,9 @@ function displayTasks(tasks) {
         let dueDate = task?.due_date || '';
         dueDate = dueDate ? new Intl.DateTimeFormat('en-GB', options).format(new Date(dueDate)) : '-';
 
+        let createdDate = task?.created_at || '';
+        createdDate = createdDate ? new Intl.DateTimeFormat('en-GB', options).format(new Date(createdDate)) : '-';
+
         const statusBadge = getStatusBadge(task.status);
         const priorityBadge = getPriorityBadge(task.priority);
         const tags = task.tags ? task.tags.map(tag => `<span class="badge" style="background-color: ${tag.color}">${tag.name}</span>`).join(' ') : '';
@@ -99,9 +139,10 @@ function displayTasks(tasks) {
         html += `<td>${task.title} ${isDeleted ? '<small class="text-muted">(Deleted)</small>' : ''}</td>`;
         html += `<td>${statusBadge}</td>`;
         html += `<td>${priorityBadge}</td>`;
-        html += `<td>${dueDate}</td>`;
+        html += `<td>${dueDate}</td>`;       
         html += `<td>${task.assigned_to ? task.assigned_to.name : '-'}</td>`;
         html += `<td>${tags}</td>`;
+         html += `<td>${createdDate}</td>`;
         html += `<td class="d-flex justify-content-end">`;
 
         if (isDeleted) {
@@ -111,7 +152,7 @@ function displayTasks(tasks) {
         } else {
             html += `<button class="btn btn-info btn-sm me-1" onclick="toggleTaskStatus(${task.id})" title="Toggle Status">
                 <i class="fas fa-toggle-on"></i>
-            </button>`;            
+            </button>`;
             html += `<button class="btn btn-warning btn-sm me-1" onclick="editTask(${task.id})" title="Edit">
                 <i class="fas fa-edit"></i>
             </button>`;
@@ -128,6 +169,19 @@ function displayTasks(tasks) {
 
     html += '</tbody></table></div>';
     container.innerHTML = html;
+}
+
+function sortTasks(field) {
+    // Toggle sort direction if clicking the same field
+    if (currentSortField === field) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSortField = field;
+        currentSortDirection = 'asc';
+    }
+
+    // Reload tasks with new sorting
+    loadTasks(currentTasksPage);
 }
 
 function displayTasksPagination() {
@@ -212,6 +266,10 @@ function clearFilters() {
         filterTags.selectpicker('deselectAll');
         //filterTags.selectpicker('refresh');
     }
+
+    // Reset sorting
+    currentSortField = null;
+    currentSortDirection = 'asc';
 
     loadTasks(1);
 }

@@ -235,11 +235,14 @@ Retrieve a list of tasks with optional filtering.
 | only_deleted | boolean | No | Show only deleted tasks | `true`, `false` |
 | limit | integer | No | Number of results per page | Default: 25, Max: 50 |
 | page | integer | No | Page number | Default: 1 |
+| sort | string | No | Sort tasks by field | title, status, priority, due_date, created_at |
+| direction | string | No | Sort direction | asc, desc |
+
 
 **Request Example:**
 
 ```
-GET /api/tasks?status=pending&priority=high&limit=10&page=1
+GET /api/tasks?status=pending&priority=high&limit=10&page=1&sort=title&direction=desc
 ```
 
 **Response:**

@@ -38,7 +38,7 @@ final class TaskService extends ServiceBase
     public function sortableFields(): array
     {
         return [
-            'title', 'priority', 'due_date', 'created_at',
+            'title', 'status', 'priority', 'due_date', 'created_at',
         ];
     }
 
