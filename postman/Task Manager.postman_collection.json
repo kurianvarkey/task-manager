@@ -7,6 +7,63 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tag 1\",\r\n    \"color\": \"#ff0000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/tags",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tag 1\",\r\n    \"color\": \"#ff0000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/tags",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Tag",
 			"item": [
 				{
@@ -442,6 +499,24 @@
 								"tasks",
 								"1",
 								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/tasks/2",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"tasks",
+								"2"
 							]
 						}
 					},
