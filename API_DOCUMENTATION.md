@@ -1,26 +1,35 @@
 # Task Manager API Documentation
 
 ## Base URL
+
 ```
 http://localhost:8000/api
 ```
 
 ## Authentication
+
 All protected endpoints require an API key in the Authorization header:
+
 ```
 Authorization: Bearer YOUR_API_KEY (token)
 ```
 
 ## Response Format
+
 All API responses follow this standard format:
+
 ```json
 {
   "status": "success",
-  "data": {...}
+  "data":
+  {
+    ...
+ }
 }
 ```
 
 ## Error Response Format
+
 ```json
 {
     "status": "failed",
@@ -39,11 +48,13 @@ All API responses follow this standard format:
 ## Authentication Endpoints
 
 ### Welcome Message
+
 Get API welcome message and version information.
 
-**Endpoint:** `GET /`
+**Endpoint:** `GET /api/`
 
 **Response:**
+
 ```json
 {
     "code": 200,
@@ -52,9 +63,10 @@ Get API welcome message and version information.
 ```
 
 ### User Signup
+
 Register a new user account.
 
-**Endpoint:** `POST /signup`
+**Endpoint:** `POST /api/signup`
 
 **Request Parameters:**
 | Parameter | Type | Required | Description | Valid Values |
@@ -65,6 +77,7 @@ Register a new user account.
 | role | string | Yes | User role | `admin`, `user` |
 
 **Request Example:**
+
 ```json
 {
     "email": "test@test.com",
@@ -76,6 +89,7 @@ Register a new user account.
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -87,9 +101,10 @@ Register a new user account.
 ```
 
 ### User Login
+
 Authenticate user and get access token.
 
-**Endpoint:** `POST /login`
+**Endpoint:** `POST /api/login`
 
 **Request Parameters:**
 | Parameter | Type | Required | Description |
@@ -98,14 +113,16 @@ Authenticate user and get access token.
 | password | string | Yes | User's password |
 
 **Request Example:**
+
 ```json
 {
-  "email": "test@test.com",
-  "password": "password123"
+    "email": "test@test.com",
+    "password": "password123"
 }
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -124,9 +141,10 @@ Authenticate user and get access token.
 ## Task Management Endpoints
 
 ### Create Task
+
 Create a new task.
 
-**Endpoint:** `POST /tasks`
+**Endpoint:** `POST /api/tasks`
 **Authentication:** Required
 
 **Request Parameters:**
@@ -142,6 +160,7 @@ Create a new task.
 | tags | array | No | Associated tags | Array of `{"id": tag_id}` |
 
 **Request Example:**
+
 ```json
 {
     "title": "Task 1",
@@ -164,6 +183,7 @@ Create a new task.
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -197,9 +217,10 @@ Create a new task.
 ```
 
 ### Get All Tasks
+
 Retrieve a list of tasks with optional filtering.
 
-**Endpoint:** `GET /tasks`
+**Endpoint:** `GET /api/tasks`
 **Authentication:** Required
 
 **Query Parameters:**
@@ -216,11 +237,13 @@ Retrieve a list of tasks with optional filtering.
 | page | integer | No | Page number | Default: 1 |
 
 **Request Example:**
+
 ```
-GET /tasks?status=pending&priority=high&limit=10&page=1
+GET /api/tasks?status=pending&priority=high&limit=10&page=1
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -266,9 +289,10 @@ GET /tasks?status=pending&priority=high&limit=10&page=1
 ```
 
 ### Get Single Task
+
 Retrieve a specific task by ID.
 
-**Endpoint:** `GET /tasks/{id}`
+**Endpoint:** `GET /api/tasks/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -277,6 +301,7 @@ Retrieve a specific task by ID.
 | id | integer | Yes | Task ID |
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -310,9 +335,10 @@ Retrieve a specific task by ID.
 ```
 
 ### Update Task (Full Update)
+
 Update all fields of a task.
 
-**Endpoint:** `PUT /tasks/{id}`
+**Endpoint:** `PUT /api/tasks/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -334,6 +360,7 @@ Update all fields of a task.
 | version | integer | Yes | Current version for optimistic locking | Version number |
 
 **Request Example:**
+
 ```json
 {
     "title": "Task 1- updated",
@@ -357,9 +384,10 @@ Update all fields of a task.
 ```
 
 ### Update Task (Partial Update)
+
 Update specific fields of a task.
 
-**Endpoint:** `PATCH /tasks/{id}`
+**Endpoint:** `PATCH /api/tasks/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -380,17 +408,19 @@ Update specific fields of a task.
 | tags | array | No | Associated tags | Array of `{"id": tag_id}` |
 
 **Request Example:**
+
 ```json
 {
-  "status": "completed",
-  "priority": "medium"
+    "status": "completed",
+    "priority": "medium"
 }
 ```
 
 ### Delete Task
+
 Soft delete a task.
 
-**Endpoint:** `DELETE /tasks/{id}`
+**Endpoint:** `DELETE /api/tasks/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -399,14 +429,16 @@ Soft delete a task.
 | id | integer | Yes | Task ID |
 
 **Response:**
+
 ```json
 204 No Content
 ```
 
 ### Toggle Task Status
+
 Toggle task status between pending/inprogress/completed.
 
-**Endpoint:** `PATCH /tasks/{id}/toggle-status`
+**Endpoint:** `PATCH /api/tasks/{id}/toggle-status`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -415,9 +447,10 @@ Toggle task status between pending/inprogress/completed.
 | id | integer | Yes | Task ID |
 
 ### Restore Task
+
 Restore a soft-deleted task.
 
-**Endpoint:** `PATCH /tasks/{id}/restore`
+**Endpoint:** `PATCH /api/tasks/{id}/restore`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -426,9 +459,10 @@ Restore a soft-deleted task.
 | id | integer | Yes | Task ID |
 
 ### Get Task Logs
+
 Retrieve activity logs for a specific task.
 
-**Endpoint:** `GET /tasks/{id}/logs`
+**Endpoint:** `GET /api/tasks/{id}/logs`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -437,6 +471,7 @@ Retrieve activity logs for a specific task.
 | id | integer | Yes | Task ID |
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -514,9 +549,10 @@ Retrieve activity logs for a specific task.
 ## Tag Management Endpoints
 
 ### Create Tag
+
 Create a new tag.
 
-**Endpoint:** `POST /tags`
+**Endpoint:** `POST /api/tags`
 **Authentication:** Required
 
 **Request Parameters:**
@@ -526,6 +562,7 @@ Create a new tag.
 | color | string | No | Tag color | Hex color format (e.g., #FF0000) |
 
 **Request Example:**
+
 ```json
 {
     "name": "Tag 1",
@@ -534,6 +571,7 @@ Create a new tag.
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -548,9 +586,10 @@ Create a new tag.
 ```
 
 ### Get All Tags
+
 Retrieve a list of tags with optional filtering.
 
-**Endpoint:** `GET /tags`
+**Endpoint:** `GET /api/tags`
 **Authentication:** Required
 
 **Query Parameters:**
@@ -561,11 +600,13 @@ Retrieve a list of tags with optional filtering.
 | page | integer | No | Page number |
 
 **Request Example:**
+
 ```
-GET /tags?name=doc&limit=10
+GET /api/tags?name=doc&limit=10
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -592,9 +633,10 @@ GET /tags?name=doc&limit=10
 ```
 
 ### Get Single Tag
+
 Retrieve a specific tag by ID.
 
-**Endpoint:** `GET /tags/{id}`
+**Endpoint:** `GET /api/tags/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -603,6 +645,7 @@ Retrieve a specific tag by ID.
 | id | integer | Yes | Tag ID |
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -617,6 +660,7 @@ Retrieve a specific tag by ID.
 ```
 
 ### Update Tag (Full Update)
+
 Update all fields of a tag.
 
 **Endpoint:** `PUT /tags/{id}`
@@ -634,17 +678,19 @@ Update all fields of a tag.
 | color | string | No | Tag color | Hex color format |
 
 **Request Example:**
+
 ```json
 {
-  "name": "API Documentation",
-  "color": "#10B981"
+    "name": "API Documentation",
+    "color": "#10B981"
 }
 ```
 
 ### Update Tag (Partial Update)
+
 Update specific fields of a tag.
 
-**Endpoint:** `PATCH /tags/{id}`
+**Endpoint:** `PATCH /api/tags/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -659,16 +705,18 @@ Update specific fields of a tag.
 | color | string | No | Tag color | Hex color format |
 
 **Request Example:**
+
 ```json
 {
-  "color": "#EF4444"
+    "color": "#EF4444"
 }
 ```
 
 ### Delete Tag
+
 Delete a tag.
 
-**Endpoint:** `DELETE /tags/{id}`
+**Endpoint:** `DELETE /api/tags/{id}`
 **Authentication:** Required
 
 **Path Parameters:**
@@ -677,6 +725,7 @@ Delete a tag.
 | id | integer | Yes | Tag ID |
 
 **Response:**
+
 ```json
 204 No Content
 ```
@@ -686,9 +735,10 @@ Delete a tag.
 ## User Management Endpoints
 
 ### Get All Users
+
 Retrieve a list of users with optional filtering.
 
-**Endpoint:** `GET /users`
+**Endpoint:** `GET /api/users`
 **Authentication:** Required
 
 **Query Parameters:**
@@ -700,11 +750,13 @@ Retrieve a list of users with optional filtering.
 | page | integer | No | Page number |
 
 **Request Example:**
+
 ```
-GET /users?name=john&limit=10
+GET /api/users?name=john&limit=10
 ```
 
 **Response:**
+
 ```json
 {
     "status": "success",
@@ -733,26 +785,27 @@ GET /users?name=john&limit=10
 
 ## Error Codes
 
-| HTTP Status | Code | Description |
-|-------------|------|-------------|
-| 200 | 200 | Success |
-| 201 | 201 | Created |
-| 204 | 204 | No Content |
-| 400 | 400 | Bad Request |
-| 401 | 401 | Unauthorized |
-| 403 | 403 | Forbidden |
-| 404 | 404 | Not Found |
-| 422 | 422 | Validation Error |
-| 429 | 429 | Too Many Requests |
-| 500 | 500 | Internal Server Error |
+| HTTP Status | Code | Description           |
+| ----------- | ---- | --------------------- |
+| 200         | 200  | Success               |
+| 201         | 201  | Created               |
+| 204         | 204  | No Content            |
+| 400         | 400  | Bad Request           |
+| 401         | 401  | Unauthorized          |
+| 403         | 403  | Forbidden             |
+| 404         | 404  | Not Found             |
+| 422         | 422  | Validation Error      |
+| 429         | 429  | Too Many Requests     |
+| 500         | 500  | Internal Server Error |
 
 ---
 
 ## Rate Limiting
 
 Authentication endpoints (`/login`, `/signup`) are rate-limited to prevent abuse:
-- **Limit:** 60 requests per minute per IP address
-- **Headers:** Rate limit information is included in response headers
+
+-   **Limit:** 60 requests per minute per IP address
+-   **Headers:** Rate limit information is included in response headers
 
 ---
 
@@ -761,6 +814,7 @@ Authentication endpoints (`/login`, `/signup`) are rate-limited to prevent abuse
 ### Complete Task Creation Flow
 
 1. **Create a tag:**
+
 ```bash
 curl -X POST http://localhost:8000/api/tags \
   -H "Authorization: Bearer 12345678-1234-1234-1234-123456789012" \
@@ -772,6 +826,7 @@ curl -X POST http://localhost:8000/api/tags \
 ```
 
 2. **Create a task with the tag:**
+
 ```bash
 curl -X POST http://localhost:8000/api/tasks \
   -H "Authorization: Bearer 12345678-1234-1234-1234-123456789012" \
@@ -787,12 +842,14 @@ curl -X POST http://localhost:8000/api/tasks \
 ```
 
 3. **Update task status:**
+
 ```bash
 curl -X PATCH http://localhost:8000/api/tasks/1/toggle-status \
   -H "Authorization: Bearer 12345678-1234-1234-1234-123456789012"
 ```
 
 4. **Get task logs:**
+
 ```bash
 curl -X GET http://localhost:8000/api/tasks/1/logs \
   -H "Authorization: Bearer 12345678-1234-1234-1234-123456789012"
