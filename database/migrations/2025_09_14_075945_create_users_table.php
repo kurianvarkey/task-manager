@@ -24,26 +24,6 @@ return new class extends Migration
             $table->string('role', 10); // enum class
             $table->timestamps();
         });
-
-        // Insert default users
-        $users = [
-            [
-                'name' => 'Admin User',
-                'email' => 'admin@net4ideas.com',
-                'api_key' => env('ADMIN_API_KEY', '12345678'),
-                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-                'role' => Role::Admin,
-            ],
-            [
-                'name' => 'Normal User',
-                'email' => 'user@net4ideas.com',
-                'api_key' => env('USER_API_KEY', '1234567891011'),
-                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-                'role' => Role::User,
-            ],
-        ];
-
-        DB::table('users')->insert($users);
     }
 
     /**
