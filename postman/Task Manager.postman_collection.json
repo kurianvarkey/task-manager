@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Tag 1\",\r\n    \"color\": \"#ff0000\"\r\n}",
+							"raw": "{\r\n    \"email1\": \"test@test.com\",\r\n    \"name\": \"Tester\",\r\n    \"password1\": \"12345678\",\r\n    \"password_confirmation\": \"12345678\",\r\n    \"role\": \"admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,12 +24,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/tags",
+							"raw": "{{endpoint}}/signup",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
-								"tags"
+								"signup"
 							]
 						}
 					},
@@ -42,7 +42,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Tag 1\",\r\n    \"color\": \"#ff0000\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"12345678\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -50,12 +50,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/tags",
+							"raw": "{{endpoint}}/login",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
-								"tags"
+								"login"
 							]
 						}
 					},
@@ -261,7 +261,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{endpoint}}/tasks?title=Task 1&status=pending&priority=medium&assigned_to=2&due_date_range=2025-09-01,2025-10-01&tags=1,2&keyword=Task&sort=created_at&direction=desc&limit=10&page=1",
+							"raw": "{{endpoint}}/tasks?title=Task 1&status=pending&priority=medium&assigned_to=2&due_date_range=2025-09-01,2025-10-01&tags=1,2&keyword=Task&only_deleted=true&sort=created_at&direction=desc&limit=10&page=1",
 							"host": [
 								"{{endpoint}}"
 							],
@@ -298,6 +298,10 @@
 								{
 									"key": "keyword",
 									"value": "Task"
+								},
+								{
+									"key": "only_deleted",
+									"value": "true"
 								},
 								{
 									"key": "sort",
@@ -382,13 +386,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{endpoint}}/tasks/1",
+							"raw": "{{endpoint}}/tasks/2",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"tasks",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -510,13 +514,58 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{endpoint}}/tasks/2",
+							"raw": "{{endpoint}}/tasks/1/logs",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"tasks",
-								"2"
+								"1",
+								"logs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/users",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Admin",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "test@test.com",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -550,8 +599,8 @@
 				"exec": [
 					"try {\r",
 					"    var response = pm.response.json();\r",
-					"    if (response.data.api_key) {\r",
-					"        pm.environment.set('api_key', response.data.api_key || '');\r",
+					"    if (response.data.token) {\r",
+					"        pm.environment.set('api_key', response.data.token || '');\r",
 					"    }    \r",
 					"} catch (e) {}"
 				]
