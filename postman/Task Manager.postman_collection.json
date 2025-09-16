@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email1\": \"test@test.com\",\r\n    \"name\": \"Tester\",\r\n    \"password1\": \"12345678\",\r\n    \"password_confirmation\": \"12345678\",\r\n    \"role\": \"admin\"\r\n}",
+							"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"name\": \"Tester\",\r\n    \"password\": \"12345678\",\r\n    \"password_confirmation\": \"12345678\",\r\n    \"role\": \"admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
