@@ -77,7 +77,7 @@ For the scope of the project, I have only tested Tag and Task endpoints.
 1. **Clone the repository**
 
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/kurianvarkey/task-manager.git
     cd task-manager
     ```
 
@@ -108,7 +108,7 @@ For the scope of the project, I have only tested Tag and Task endpoints.
 1. **Clone and prepare environment**
 
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/kurianvarkey/task-manager.git
     cd task-manager
     cp .env.example .env
     ```
@@ -136,7 +136,7 @@ For the scope of the project, I have only tested Tag and Task endpoints.
 1. **Clone and setup**
 
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/kurianvarkey/task-manager.git
     cd task-manager
     cp .env.example .env
     ```
