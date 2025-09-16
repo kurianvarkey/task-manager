@@ -17,11 +17,7 @@ class UserCheck implements ValidationRule
     {
         $value = (int) $value;
 
-        if (empty($value)) {
-            return;
-        }
-
-        if (User::id($value)->count('id') == 0) {
+        if (! empty($value) && User::id($value)->count('id') == 0) {
             $fail("The user with id {$value} does not exist.");
         }
     }

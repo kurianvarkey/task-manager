@@ -94,15 +94,13 @@ class Task extends Model
     #[Scope]
     protected function status(Builder $query, int|string $status): void
     {
-        if (empty($status)) {
-            return;
-        }
+        if (! empty($status)) {
+            if (is_string($status)) {
+                $status = TaskStatus::fromString($status);
+            }
 
-        if (is_string($status)) {
-            $status = TaskStatus::fromString($status);
+            $query->where('status', $status);
         }
-
-        $query->where('status', $status);
     }
 
     /**
@@ -111,15 +109,13 @@ class Task extends Model
     #[Scope]
     protected function priority(Builder $query, int|string $priority): void
     {
-        if (empty($priority)) {
-            return;
-        }
+        if (! empty($priority)) {
+            if (is_string($priority)) {
+                $priority = TaskPriority::fromString($priority);
+            }
 
-        if (is_string($priority)) {
-            $priority = TaskPriority::fromString($priority);
+            $query->where('priority', $priority);
         }
-
-        $query->where('priority', $priority);
     }
 
     /**
@@ -137,10 +133,6 @@ class Task extends Model
     #[Scope]
     protected function dueDateRange(Builder $query, string $datesString): void
     {
-        if (empty($datesString)) {
-            return;
-        }
-
         $dates = explode(',', $datesString);
         $dates = array_map('trim', explode(',', $datesString));
 
@@ -172,19 +164,13 @@ class Task extends Model
     #[Scope]
     protected function tagsIn(Builder $query, string $tags): void
     {
-        if (empty($tags)) {
-            return;
-        }
-
         $tagIds = array_map('trim', explode(',', $tags));
 
-        if (empty($tagIds)) {
-            return;
+        if (! empty($tagIds)) {
+            $query->whereHas('tags', function (Builder $query) use ($tagIds) {
+                $query->whereIn('tags.id', $tagIds);
+            });
         }
-
-        $query->whereHas('tags', function (Builder $query) use ($tagIds) {
-            $query->whereIn('tags.id', $tagIds);
-        });
     }
 
     /**
@@ -193,16 +179,14 @@ class Task extends Model
     #[Scope]
     protected function keyword(Builder $query, string $keyword): void
     {
-        if (empty($keyword)) {
-            return;
+        if (! empty($keyword)) {
+            // full text search for mysql and pgsql. sqlite doesn't support fulltext
+            $driver = DB::connection()->getDriverName();
+            match ($driver) {
+                'mysql', 'pgsql' => $query->whereFullText(['title', 'description'], $keyword),
+                default => $query->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('description', 'like', "%{$keyword}%"),
+            };
         }
-
-        // full text search for mysql and pgsql. sqlite doesn't support fulltext
-        $driver = DB::connection()->getDriverName();
-        match ($driver) {
-            'mysql', 'pgsql' => $query->whereFullText(['title', 'description'], $keyword),
-            default => $query->where('title', 'like', "%{$keyword}%")
-                ->orWhere('description', 'like', "%{$keyword}%"),
-        };
     }
 }

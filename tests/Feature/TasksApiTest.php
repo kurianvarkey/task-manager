@@ -450,6 +450,14 @@ final class TasksApiTest extends TestCase
                 'due_dates' => 'date1,date2',
                 'no_of_tasks' => 0,
             ],
+            [
+                'due_dates' => '2025-09-12,date2',
+                'no_of_tasks' => 0,
+            ],
+            [
+                'due_dates' => '2025-09-12,2025-09-11',
+                'no_of_tasks' => 0,
+            ],
         ];
 
         foreach ($exptectedFailedResults as $result) {
