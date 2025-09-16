@@ -24,10 +24,14 @@
             <file>./app/Http/Requests/Rules/Boolean.php</file>
             <file>./app/DTOs/SignupDTO.php</file>
             <file>./app/Http/Controllers/AuthController.php</file>
+            <file>./app/Http/Controllers/UserController.php</file>
             <file>./app/Http/Requests/LoginRequest.php</file>
             <file>./app/Http/Requests/SignupRequest.php</file>
+            <file>./app/Http/Requests/UserRequest.php</file>
             <file>./app/Http/Resources/User/LoginResource.php</file>
+            <file>./app/Http/Resources/User/UserCollection.php</file>
             <file>./app/Services/AuthService.php</file>
+            <file>./app/Services/UserService.php</file>
         </exclude>
     </source>
     <php>

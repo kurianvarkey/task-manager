@@ -24,7 +24,7 @@ final class TaskRequest extends BaseRequest
             case 'POST':
                 $rules = [
                     'title' => ['required', 'string', 'min:5', 'max:100'],
-                    'description' => ['string'],
+                    'description' => ['nullable', 'string'],
                     'status' => [Rule::in(TaskStatus::getValues())],
                     'priority' => [Rule::in(TaskPriority::getValues())],
                     'due_date' => ['nullable', 'date', 'after_or_equal:today'],

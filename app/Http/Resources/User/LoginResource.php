@@ -17,6 +17,7 @@ class LoginResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->whenHas('id'),
             'name' => $this->whenHas('name'),
             'email' => $this->whenHas('email'),
             'role' => $this->whenHas('role'),

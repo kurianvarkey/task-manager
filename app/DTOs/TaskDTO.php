@@ -25,7 +25,7 @@ class TaskDTO
         public string|int|null $priority = null,
         public ?string $due_date = null,
         public ?array $assigned_to = null,
-        public ?int $version = null,
+        public int|string|null $version = null,
         public ?array $metadata = null,
         public ?array $tags = null
     ) {}
@@ -51,7 +51,7 @@ class TaskDTO
             priority: $data['priority'] ?? null,
             due_date: $data['due_date'] ?? null,
             assigned_to: $data['assigned_to'] ?? null,
-            version: $data['version'] ?? null,
+            version: (int) ($data['version'] ?? null),
             metadata: $data['metadata'] ?? null,
             tags: $data['tags'] ?? null
         );

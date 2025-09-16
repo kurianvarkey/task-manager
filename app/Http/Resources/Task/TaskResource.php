@@ -35,6 +35,7 @@ class TaskResource extends JsonResource
             'version' => $this->whenHas('version'),
             'created_at' => $this->whenHas('created_at'),
             'updated_at' => $this->whenHas('updated_at'),
+            'deleted_at' => $this->whenNotNull($this->deleted_at),
         ];
     }
 }

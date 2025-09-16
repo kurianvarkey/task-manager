@@ -92,6 +92,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Scope a query to only include user with a given name.
+     */
+    #[Scope]
+    protected function name(Builder $query, string $name): void
+    {
+        $query->where('name', $name);
+    }
+
+    /**
      * Scope a query to only include user with a given api key.
      */
     #[Scope]

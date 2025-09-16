@@ -24,6 +24,7 @@ class TaskLogResource extends JsonResource
             }),
             'changes' => $this->whenHas('changes'),
             'created_by' => new UserResource($this->whenLoaded('createdBy')),
+            'created_at' => $this->whenHas('created_at'),
         ];
     }
 }
