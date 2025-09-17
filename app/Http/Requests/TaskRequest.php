@@ -54,16 +54,8 @@ final class TaskRequest extends BaseRequest
 
             case 'PATCH': // PATCH updates the resource partially
                 $rules = [
-                    'title' => ['nullable', 'string', 'min:5', 'max:100'],
-                    'description' => ['nullable', 'string'],
                     'status' => ['nullable', Rule::in(TaskStatus::getValues())],
                     'priority' => ['nullable', Rule::in(TaskPriority::getValues())],
-                    'due_date' => ['nullable', 'date', 'after_or_equal:today'],
-                    'assigned_to' => ['nullable', 'array'],
-                    'assigned_to.id' => ['required_with:assigned_to', 'integer', new UserCheck],
-                    'metadata' => ['nullable', 'array'],
-                    'tags' => ['nullable', 'array'],
-                    'tags.*.id' => ['required_with:tags', 'integer'],
                 ];
                 break;
 

@@ -182,7 +182,11 @@ final class TasksApiTest extends TestCase
     public function test_task_can_be_patched(): void
     {
         // call to create the task
-        $response = $this->postWithHeader($this->endPoint, ['title' => 'Test Task']);
+        $response = $this->postWithHeader($this->endPoint, [
+            'title' => 'Test Task',
+            'status' => TaskStatus::Pending->value,
+            'priority' => TaskPriority::Medium->value]
+        );
         $task = $response->json()['data'] ?? [];
         if (empty($task)) {
             $this->fail('Task not created');
@@ -190,11 +194,15 @@ final class TasksApiTest extends TestCase
 
         $task = (object) $task;
 
-        // Patch to update the tag partially
-        $dueDate = now()->addDays(2);
-        $this->patchWithHeader($this->endPoint . '/' . $task->id, ['due_date' => $dueDate->format('Y-m-d')])
+        // Patch to update the tag partially - status
+        $this->patchWithHeader($this->endPoint . '/' . $task->id, ['status' => TaskStatus::InProgress->value])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonPath('data.due_date', $dueDate->format('Y-m-d'));
+            ->assertJsonPath('data.status', TaskStatus::InProgress->value);
+
+        // Patch to update the tag partially - priority
+        $this->patchWithHeader($this->endPoint . '/' . $task->id, ['priority' => TaskPriority::High->value])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.priority', TaskPriority::High->value);
     }
 
     /**

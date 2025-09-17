@@ -33,8 +33,8 @@ final class TagRequest extends BaseRequest
             case 'PATCH': // PATCH updates the resource partially
                 $id = trim(request()->segment(3));
                 $rules = [
-                    'name' => ['string', 'max:100',  new TagNameCheck($id)],
-                    'color' => ['hex_color'],
+                    'name' => ['nullable', 'string', 'max:100',  new TagNameCheck($id)],
+                    'color' => ['nullable', 'hex_color'],
                 ];
                 break;
 
