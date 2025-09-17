@@ -401,14 +401,8 @@ Update specific fields of a task.
 **Request Parameters:**
 | Parameter | Type | Required | Description | Valid Values |
 |-----------|------|----------|-------------|--------------|
-| title | string | No | Task title | Min 5, max 100 characters |
-| description | string | No | Task description | Text |
 | status | string | No | Task status | `pending`, `inprogress`, `completed` |
 | priority | string | No | Task priority | `low`, `medium`, `high` |
-| due_date | string | No | Due date | Date format (YYYY-MM-DD) |
-| assigned_to | object | No | Assigned user | `{"id": user_id}` |
-| metadata | object | No | Additional metadata | JSON object |
-| tags | array | No | Associated tags | Array of `{"id": tag_id}` |
 
 **Request Example:**
 
