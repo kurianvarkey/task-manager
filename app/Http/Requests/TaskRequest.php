@@ -103,7 +103,7 @@ final class TaskRequest extends BaseRequest
             $tagsCount = Tag::whereIn('id', $tagIds)->count();
 
             if (count($tagIds) !== $tagsCount) {
-                $this->validator->errors()->add('tags', 'Invalid tag ids. Some tags are not found.');
+                $this->validator->errors()->add('tags', 'Invalid tag ids. Some tag(s) is not found.');
             }
         }
 
