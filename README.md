@@ -18,7 +18,7 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 - Implement validation and error handling
 - Implement authentication and authorization
 - Implement pagination and filtering
-- Implement optimistic locking for better concurrency using version field
+- Implement optimistic locking to avoid race conditions using version field
 - Implement eager loading to avoid N+1 problem
 - Soft delete & restore for tasks
 - Audit logs for task with elloquent events
