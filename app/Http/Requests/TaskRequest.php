@@ -93,7 +93,7 @@ final class TaskRequest extends BaseRequest
      */
     protected function passedValidation(): void
     {
-        if (! in_array($this->getHttpMethod(), ['POST', 'PUT', 'PATCH'])) {
+        if (! in_array($this->getHttpMethod(), ['POST', 'PUT'])) {
             return;
         }
 
