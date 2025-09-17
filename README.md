@@ -4,7 +4,7 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 
 ## Features
 
-- Complete REST API for task management
+- REST API for task management
 - User authentication with API keys (token based authentication)
 - Admin and user role management
 - Docker containerization support
@@ -22,6 +22,7 @@ A task management REST API built with Laravel 12 and PHP 8.4. There is also a fr
 - Implement eager loading to avoid N+1 problem
 - Soft delete & restore for tasks
 - Audit logs for task using elloquent events
+- Role based access control - admin can manage all tasks, users can only manage their own tasks using laravel policies
 
 ## Requirements
 
